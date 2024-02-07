@@ -1,0 +1,30 @@
+classdef controlSurf < liftSurf
+    % Subclass representing control surfaces
+    %
+    % Jemima Poynton 06/02/24
+    properties
+        maxDeflection(1,2) {mustBeReal, mustBeFinite, mustBeInRange(maxDeflection,-3.142,3.142)} = 0
+        deflection(1,1) {mustBeReal, mustBeFinite} = 0
+    end
+
+    methods
+        function obj = setPosition(S, ~)
+        end
+
+        function obj = setMaxDeflection(ub, lb)
+        % function setMaxDeflection restricts the deflection of the
+        % control surface between ub, lb.
+        end
+
+        function obj = deflect(obj, def)
+        % function deflect deflects the control surface by deflection
+        % deflection: deflection from mounting i.e. inital state
+    
+            if def <= obj.maxDeflection(1)
+                obj.deflection = def;
+            else
+                obj.deflection = obj.maxDeflection
+            end
+        end
+    end
+end

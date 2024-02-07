@@ -1,0 +1,17 @@
+classdef fuselage
+    properties
+        weight(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+        CG(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+        kf1(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+        length(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+        diameter(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+    end
+    
+    methods
+        function obj = setGeometry(obj, weight, CG, Kf1, length, diameter)
+            obj.weight = weight;
+            obj.CG = CG;
+            obj.Kf1 = K
+        end
+    end
+end
