@@ -6,7 +6,9 @@ classdef wing < liftSurf
     properties
         %% GEOMETRY
         sweep(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
-        CSs = []
+        CSs(1,:) = []
+        sideY = 0; % side
+
         %% MOUNTING AND POSITION
         % All distances are taken from the centre of gravity, and angles
         % are taken from the wing root
@@ -15,8 +17,9 @@ classdef wing < liftSurf
         % ang: mounting in the form [theta_x, theta_y, theta_z]
         %
         % x: defined as forward flight direction (cruise) in the body frame
+        %    +ve aft of the nose.
         % y: defined as perpendicular to forward flight, on the horizontal 
-        %    plane, in the body frame
+        %    plane, in the body frame +ve to the right of the CG
         % z: z position, defined vertically down in the body frame
         % theta_x: mounting angle CW about X
         % theta_y: mounting angle CW about y

@@ -26,30 +26,26 @@ end
 
 %% Plot Fuselage
 % Just plot a straight line of a certain colour, and mark CG and CL
-fuselage = aircraft.fuselage;
-nF = length(fuselage);
-
-for i = 1:nF
-
-end
 
 %% Plot Lift Surfaces
 % Currently assume straight edges of wing - simplified representation
+% Define 4 corner points
 
 lift = aircraft.lift;
 nL = length(lift);
 
 for i = 1:nL
+    % plotTE
     ang = lift(i).ang;
-    xyz1 = lift(i).pos; % !ADD SWEEP!
+    xyz1 = lift(i).pos;
 
     Lt = transMatrix(ang);
-    xyz2 = [0 lift(i).sideY*lift(i).span 0]*Lt; % transform a translation of span in the wing plane
-    xyz3 = [getChord(lift(i), lift(i).span) lift(i).sideY*lift(i).span 0]*Lt;
-    xyz4 = [getChord(lift(i), 0) 0 0]*Lt;
+    xyz2(1) = [0 lift(i).span 0]*Lt; % transform a translation of span in the wing plane
 
-    plot3([xyz1(1) xyz2(1) xyz3(1) xyz4(1)], [xyz1(2) xyz2(2) xyz3(2) xyz4(2)], [xyz1(3) xyz2(3) xyz3(3) xyz4(3)])
+    scatter3([xyz1(1) xyz2(1) xyz3(1) xyz4(1)], [xyz1(2) xyz2(2) xyz3(2) xyz4(2)], [xyz1(3) xyz2(3) xyz3(3) xyz4(3)])
 end
+
+
 
 %% Plot control surfaces
 % Define plane

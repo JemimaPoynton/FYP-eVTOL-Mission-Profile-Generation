@@ -43,6 +43,7 @@ classdef configDef
         % function addThrust adds an additional lift surface to the
         % configuration. This may be a wing or tail, and will contain 
         % control surfaces.
+        obj.fuselage = [obj.fuselage newFuselage];
         end
 
         function obj = calculateCoL(obj)

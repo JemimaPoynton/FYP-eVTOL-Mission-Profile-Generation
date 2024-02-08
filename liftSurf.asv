@@ -35,7 +35,7 @@ classdef liftSurf
         % span
         CR = ((2*obj.c)/(1 + obj.taper));
         CT = obj.taper*CR;
-        chord = CR + (CT - CR)*(dist/obj.span);      
+        chord = CT + (CR - (CT - CR)*(dist));      
         end
 
         function obj = getNACA_Data(obj, name)
