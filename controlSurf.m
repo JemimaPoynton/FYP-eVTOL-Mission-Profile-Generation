@@ -3,22 +3,37 @@ classdef controlSurf < liftSurf
     %
     % Jemima Poynton 06/02/24
     properties
-        maxDeflection(1,2) {mustBeReal, mustBeFinite, mustBeInRange(maxDeflection,-3.142,3.142)} = [0 0]
+        maxDeflection(1,2) {mustBeReal, mustBeFinite, mustBeInRange(maxDeflection,-3.142,3.142)} = [-3.142 3.142]
         deflection(1,1) {mustBeReal, mustBeFinite} = 0
         pos(1,3) {mustBeReal, mustBeFinite} = [0 0 0];
+        chordRatio(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative}
+        edge(1,1) {mustBeMember(edge, ["LE" "TE"])} = "TE"
     end
 
     methods
-        function obj = setPosition(distInb, liftSurf)
+        function obj = controlSurf(chordRatio, edge, Cla, span, tc)
+            obj.chordRatio = chordRatio;
+            obj.edge = edge;
+            obj.Cla = Cla;
+            obj.span = span;
+            obj.tc = tc;
+        end
+
+        function obj = setPosition(obj, distInb, liftSurf)
         % function setPosition converts dimensions in the plane of the wing
         % into x,y,z coordinates.
         %
         % liftSurf: Associated lifting surface on which it is mounted (e.g. wing)
         % distInb: Inboard distance along lifting surface plane from root
-        x = []; % !Determine this after testing in plotConfig!
-        y = [];
-        z = [];
-        obj.pos = [x,y,z];
+            if obj.edge == "LE"
+                Lt = transMatrix(liftSurf.ang);
+                obj.pos = liftSurf.pos + [distInb*tan(liftSurf.sweep)- getChord(liftSurf, distInb) + getChord(obj, 0, liftSurf) distInb*liftSurf.sideY 0]*Lt;
+            else
+                Lt = transMatrix(liftSurf.ang);
+                obj.pos = liftSurf.pos + [distInb*tan(liftSurf.sweep) distInb*liftSurf.sideY 0]*Lt;
+            end          
+
+            obj.c = obj.chordRatio*liftSurf.c;
 
         end
 
@@ -39,6 +54,15 @@ classdef controlSurf < liftSurf
             else
                 obj.deflection = def;
             end
+        end
+
+        function [chord, obj] = getChord(obj, dist, liftSurf)
+        % function getChord gets the chord at a given dist along the
+        % span
+            obj.c = obj.chordRatio*liftSurf.c;
+            CR = ((2*obj.c)/(1 + liftSurf.taper));
+            CT = liftSurf.taper*CR;
+            chord = CR + (CT - CR)*(dist/obj.span);      
         end
     end
 end

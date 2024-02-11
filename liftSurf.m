@@ -1,4 +1,4 @@
-classdef liftSurf
+lidclassdef liftSurf
     % Class definition liftSurf represents the properties and mounting
     % position of a single lifting surface, e.g. a wing.
     %
@@ -17,25 +17,23 @@ classdef liftSurf
        span(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0;
        tc(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0;
        c(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0;
-       taper(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 1;
 
     end
 
     methods
-        function obj = setGeometry(obj, Cla, span, tc, c, taper)
+        function obj = setGeometry(obj, Cla, span, tc, c)
             obj.Cla = Cla;
             obj.span = span;
             obj.tc = tc;
             obj.c = c;
-            obj.c = taper;
         end
 
         function chord = getChord(obj, dist)
         % function getChord gets the chord at a given dist along the
         % span
-        CR = ((2*obj.c)/(1 + obj.taper));
-        CT = obj.taper*CR;
-        chord = CR + (CT - CR)*(dist/obj.span);      
+            CR = ((2*obj.c)/(1 + obj.taper));
+            CT = obj.taper*CR;
+            chord = CR + (CT - CR)*(dist/obj.span);      
         end
 
         function obj = getNACA_Data(obj, name)

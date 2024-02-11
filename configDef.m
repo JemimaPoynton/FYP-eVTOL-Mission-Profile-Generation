@@ -17,16 +17,22 @@ classdef configDef
     properties
         description % free variable for labelling
         I(1,3)
-        thrust % !Restrict/define types!
+        thrust = struct('rotors',[],'ducts',[])
         lift
         fuselage
-        CoL
+        CoL(1,3) = [0 0 0]
+        CG(1,3) = [0 0 0]
     end
 
     methods
         function obj = addThrust(obj, newThrust)
         % function addThrust adds an additional thruster to the
         % configuration. This may be either the rotor or duct subclass.
+        if class(newThrust) == "rotor"
+            obj.thrust.rotors = [obj.thrust.rotors newThrust];
+        elseif class(newThrust) == "duct"
+            obj.thrust.ducts = [obj.thrust.ducts newThrust];
+        end
 
         end
 
@@ -49,6 +55,9 @@ classdef configDef
         function obj = calculateCoL(obj)
         % function calculateCoL calculates and sets the centre of lift of
         % the configuration.
+        end
+
+        function obj = calculateCG(obj)
         end
 
         function obj = estimateCD(obj)

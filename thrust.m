@@ -5,6 +5,8 @@ classdef thrust
     % Jemima Poynton 06/02/24 
 
      properties
+        mass(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+        CG(1,1) {mustBeReal, mustBeFinite} = 0
         %% MOUNTING AND POSITION
         % All distances are taken from the centre of gravity, and angles
         % are taken from the centre of thrust 
@@ -20,8 +22,8 @@ classdef thrust
         % theta_y: mounting angle CW about y
         % theta_z: mounting angle CW about z
 
-        pos(1,3) {mustBeReal, mustBeFinite, mustBeNonnegative} = [0 0 0];
-        ang(1,3) {mustBeReal, mustBeFinite, mustBeNonnegative} = [0 0 0];
+        pos(1,3) {mustBeReal, mustBeFinite} = [0 0 0];
+        ang(1,3) {mustBeReal, mustBeFinite} = [0 0 0];
      end
 
      methods
