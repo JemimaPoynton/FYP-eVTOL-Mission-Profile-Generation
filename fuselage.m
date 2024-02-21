@@ -7,7 +7,7 @@ classdef fuselage
     %% Geometry
     % weight: overall weight
     % CG: Centre of gravity position, aft from nose
-    % kf: factor representing contribution to !WHAT?!
+    % kf: factor representing contribution to !what?!
     % length: length aft to fwd
     % diameter: mean fuselage diameter
     % Swet: 'wetted' area
@@ -22,6 +22,8 @@ classdef fuselage
         Swet(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
         kc(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 1
         laft(1,1) = 0;
+        type = "cylindrical"
+        ln(1,1)
 
     %% MOUNTING AND POSITION
     % pos: position (inboard root point trailing edge point) in the form [x, y, z]
@@ -37,15 +39,41 @@ classdef fuselage
     end
     
     methods
+        function obj = fuselage(weight, CG, kf, leng, diameter, Swet, kc, laft)
+            obj.Swet = Swet;
+            obj.kc = kc;
+            obj.laft = laft;
+
+            obj = setGeometry(obj, weight, CG, kf, leng, diameter);
+            obj = estimateWettedArea(obj, "cylindrical"); % get default Swet
+        end
+
         function obj = setGeometry(obj, weight, CG, kf, leng, diameter)
             obj.weight = weight;
             obj.CG = CG;
             obj.kf = kf;
-            obj.len = leng;
+            obj.leng = leng;
             obj.diameter = diameter;
         end
 
-        function drag = estimateDrag(obj)
+        function obj = estimateWettedArea(obj, type, ln)
+        % function setWettedArea applies an estimation of wetted area. 
+        %
+        % type: specifies whether to use estimations for a fuselage with a
+        %       centre cylindrical section, or a streamlined fuselage.
+    
+            assert(ismember(lower(string(type)), ["cylindrical", "streamlined"]), "'type' must be either ""cylindrical"" or ""streamlined""")
+            type = lower(string(type)); % case and type flexibility
+    
+            fineness = obj.leng/obj.diameter;
+    
+            if type == "cylindrical"
+                obj.Swet = pi*obj.diameter*obj.leng*(1 + (1/fineness^2))*(1 - (2/fineness))^(2/3);
+
+            elseif type == "streamlined"
+                obj.Swet = pi*obj.diameter*obj.leng*(1.015 + (0.3/fineness^1.5))*(0.5 + 0.135*(ln/obj.leng))^(2/3);
+            end
+        
         end
     end
 end

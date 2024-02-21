@@ -1,4 +1,4 @@
-lidclassdef liftSurf
+classdef liftSurf
     % Class definition liftSurf represents the properties and mounting
     % position of a single lifting surface, e.g. a wing.
     %
@@ -7,7 +7,8 @@ lidclassdef liftSurf
     properties
     %% AERODYNAMIC
        % Cla: mean lift curve slope (linearised aerodynamics) [rad]
-       % span: Span of wing [m]
+       % span: Span of lift surface [m]. Note that wings are individually
+       %       defined, so for a symmetric aircraft the wingspan is 2*span.
        % tc: chord thickness ratio
        % c: mean chord [m]
        % taper: taper ratio
@@ -17,6 +18,7 @@ lidclassdef liftSurf
        span(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0;
        tc(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0;
        c(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative} = 0;
+       aerofoil = "0012";
 
     end
 
@@ -33,7 +35,7 @@ lidclassdef liftSurf
         % span
             CR = ((2*obj.c)/(1 + obj.taper));
             CT = obj.taper*CR;
-            chord = CR + (CT - CR)*(dist/obj.span);      
+            chord = CR + (CT - CR)*(abs(dist)/obj.span);      
         end
 
         function obj = getNACA_Data(obj, name)
@@ -42,7 +44,9 @@ lidclassdef liftSurf
         %
         % name: NACA aerofoil standard name
 
-        [obj.NACA_Data, obj.Cla, obj.tc] = getNACA(name); % need to define getNACA function - is there already a NACA database addon?
+        [obj.NACA_Data, obj.Cla, obj.tc, ~] = getNACA(name);
+        obj.aerofoil = name;
+        obj.tc = char2double(char(name(end-1:end)));
         end
     end
 end

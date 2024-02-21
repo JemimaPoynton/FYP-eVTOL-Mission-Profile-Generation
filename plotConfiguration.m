@@ -80,73 +80,19 @@ for i = 1:nF
 
     % Plot conical aft (tail section)
     x = linspace((fuselage.leng - fuselage.laft), fuselage.leng, 1000);
-    plot3(x, (fuselage(i).pos(2) - r)*ones(size(x)) + fuselage.laft - (r/(fuselage.laft)).*x, fuselage(i).pos(3)*ones(size(x)), 'red-', 'HandleVisibility','off')
-    plot3(x, (fuselage(i).pos(2) + r)*ones(size(x)) - fuselage.laft + (r/(fuselage.laft)).*x, fuselage(i).pos(3)*ones(size(x)), 'red-', 'HandleVisibility','off')
-    plot3(x, zeros(size(x)), (fuselage(i).pos(3) + r)*ones(size(y)) - fuselage.laft + (r/(fuselage.laft)).*x, 'red-', 'HandleVisibility','off')
-    plot3(x, zeros(size(x)), (fuselage(i).pos(3) - r)*ones(size(y)) + fuselage.laft - (r/(fuselage.laft)).*x, 'red-', 'HandleVisibility','off')
+    plot3(x, (fuselage(i).pos(2) + r)*ones(size(x)) -(r/(fuselage.laft)).*(x-(fuselage.leng - fuselage.laft)), fuselage(i).pos(3)*ones(size(x)), 'red-', 'HandleVisibility','off')
+    plot3(x, (fuselage(i).pos(2) - r)*ones(size(x)) +(r/(fuselage.laft)).*(x-(fuselage.leng - fuselage.laft)), fuselage(i).pos(3)*ones(size(x)), 'red-', 'HandleVisibility','off')
+    plot3(x, zeros(size(x)), (fuselage(i).pos(3) + r)*ones(size(y)) - (r/(fuselage.laft)).*(x-(fuselage.leng - fuselage.laft)), 'red-', 'HandleVisibility','off')
+    plot3(x, zeros(size(x)), (fuselage(i).pos(3) - r)*ones(size(y)) + (r/(fuselage.laft)).*(x-(fuselage.leng - fuselage.laft)), 'red-', 'HandleVisibility','off')
 end
 
 %% Plot Lift Surfaces
 % Currently assume straight edges of wing - simplified representation
-
-lift = aircraft.lift;
-nL = length(lift);
-
-for i = 1:nL
-    ang = lift(i).ang.*[1 -1 1];
-    xyz1 = lift(i).pos;
-
-    if i>1
-        handlevis = 'off'; % Handling legend
-    else
-        handlevis = 'on';
-    end
-
-    Lt = transMatrix(ang);
-    xyz2 = xyz1 + [lift(i).span*tan(lift(i).sweep) lift(i).sideY*lift(i).span 0]*Lt; % transform a translation of span in the wing plane
-    xyz3 = xyz1 + [-getChord(lift(i), lift(i).span) + lift(i).span*tan(lift(i).sweep) lift(i).sideY*lift(i).span 0]*Lt;
-    xyz4 = xyz1 + [-getChord(lift(i), 0) 0 0]*Lt;
-
-    plot3([xyz1(1) xyz2(1) xyz3(1) xyz4(1)], [xyz1(2) xyz2(2) xyz3(2) xyz4(2)], [xyz1(3) xyz2(3) xyz3(3) xyz4(3)], 'black-', 'HandleVisibility', handlevis)
-    
-    CSs_vec = lift(i).CSs;
-    for j = 1:length(CSs_vec)
-        ang = lift(i).ang.*[1 -1 1];
-        xyz12 = CSs_vec(j).pos;
-
-        if j>1
-            handlevis = 'off'; % Handling legend
-        end
-        
-        CT = getChord(CSs_vec(j), CSs_vec(j).span, lift(i));
-        CR = getChord(CSs_vec(j), 0, lift(i));
-
-        Lt = transMatrix(ang);
-
-        if CSs_vec(j).edge == "LE"
-            taperAng = atan((getChord(lift(i),0) - getChord(lift(i),lift(i).span))/lift(i).span);
-
-            xyz22 = xyz12 + [-CR + CT + CSs_vec(j).span*tan(taperAng) + (CSs_vec(j).span)*tan(lift(i).sweep), ...
-                    lift(i).sideY*CSs_vec(j).span, ...
-                    0]*Lt;
-
-            xyz32 = xyz12 + [-CR + CSs_vec(j).span*tan(taperAng) + (CSs_vec(j).span)*tan(lift(i).sweep), ...
-                    lift(i).sideY*CSs_vec(j).span, ...
-                    0]*Lt;
-            
-            xyz42 = xyz12 + [-CR 0 0]*Lt;
-        else
-            xyz22 = xyz12 + [CSs_vec(j).span*tan(lift(i).sweep) lift(i).sideY*CSs_vec(j).span 0]*Lt; % transform a translation of span in the wing plane
-            xyz32 = xyz12 + [-CT + CSs_vec(j).span*tan(lift(i).sweep) lift(i).sideY*CSs_vec(j).span 0]*Lt;
-            xyz42 = xyz12 + [-CR 0 0]*Lt;
-        end
-        
-        plot3([xyz12(1) xyz22(1) xyz32(1) xyz42(1) xyz12(1)], [xyz12(2) xyz22(2) xyz32(2) xyz42(2) xyz12(2)], [xyz12(3) xyz22(3) xyz32(3) xyz42(3) xyz12(3)], 'green-', 'HandleVisibility', handlevis)
-    end
-end
-
+plotLift(aircraft.lift, 1)
 
 %% General
+noCS = 1;
+
 axis equal
 xlabel('x [m]')
 ylabel('y [m]')
@@ -155,11 +101,16 @@ zlabel('z [m]')
 scatter3(aircraft.CoL(:,1), aircraft.CoL(:,2), aircraft.CoL(:,3), '<', 'green')
 scatter3(aircraft.CG(:,1), aircraft.CG(:,2), aircraft.CG(:,3), 'filled','^', 'green')
 
-if isempty(aircraft.thrust.ducts)
-    legend('Rotors', 'fuselage', 'Lifting Surfaces', 'Control Surface', 'Centre of Lift', 'Centre of Gravity')
-elseif isempty(aircraft.thrust.rotors)
-    legend('Ducts', 'fuselage', 'Lifting Surfaces', 'Control Surface', 'Centre of Lift', 'Centre of Gravity')
-else
-    legend('Rotors', 'Ducts', 'fuselage', 'Lifting Surfaces', 'Control Surface', 'Centre of Lift', 'Centre of Gravity')
+for i = 1:length(aircraft.lift) % Check each lift surface for control surfaces and set noCS as false if anything found
+    if ~isempty(aircraft.lift(i).CSs)
+        noCS = 0;
+    end
 end
+
+presentComp = ~[isempty(aircraft.thrust.ducts) isempty(aircraft.thrust.rotors) isempty(aircraft.fuselage) isempty(aircraft.lift) noCS 1 1];
+list = string(str2sym(["Rotors", "Ducts", "fuselage", "Lifting Surfaces", "Control Surface", "Centre of Lift", "Centre of Gravity"]).*presentComp);
+list( :, all(list == "0",1) ) = []; % set all zeros to empty
+
+legend([string(list) "Centre of Lift", "Centre of Gravity"])
+hold off
 

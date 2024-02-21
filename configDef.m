@@ -22,6 +22,11 @@ classdef configDef
         fuselage
         CoL(1,3) = [0 0 0]
         CG(1,3) = [0 0 0]
+        Cd0(1,1)
+    end
+
+    properties (Access = private)
+        Cfe(1,1) = 0.004; % default value from empirical reference: https://www.fzt.haw-hamburg.de/pers/Scholz/HOOU/AircraftDesign_13_Drag.pdf
     end
 
     methods
@@ -60,9 +65,28 @@ classdef configDef
         function obj = calculateCG(obj)
         end
 
-        function obj = estimateCD(obj)
-        % function calculateCoL calculates and sets the centre of lift of
-        % the configuration.
+        function Cd0 = estimateFormDrag(obj, Sref, Cfe)
+        % function estimateDrag estimates the drag introduced by the wetted
+        % area of the fuselage and lifting surfaces
+        %
+        % Cfe: equivalent friction coefficient
+        % Sref: reference area for non-dimensionalisation
+
+            if ~exist('Cfe','var') % Allow for use of default value or input value
+                Cfe = obj.Cfe;
+            end
+            
+            obj.Cd0 = 0;
+
+            for i = 1:length(obj.fuselage)
+                obj.fuselage(i) = estimateWettedArea(obj.fuselage(i), obj.fuselage(i).type, obj.fuselage(i).ln);       
+                obj.Cd0 = obj.Cd0 + Cfe*(obj.fuselage(i).Swet/Sref);
+            end
+
+            for i = 1:length(obj.lift)
+                obj.lift(i) = estimateWettedArea(obj.lift(i));
+                obj.Cd0 = obj.Cd0 + Cfe*(obj.lift(i).Swet/Sref);
+            end
         end
     end
 end

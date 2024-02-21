@@ -6,6 +6,16 @@ classdef rotor < thrust
     end
 
     methods
+        function obj = rotor(radius, rpm, solidity, mass, CG, pos, ang)
+            obj.radius = radius;
+            obj.rpm = rpm;
+            obj.solidity = solidity;
+            obj.mass = mass;
+            obj.CG = CG;
+            obj.pos = pos;
+            obj.ang = ang;
+        end
+
         function thrust = calculateThrust(obj)
         end
         

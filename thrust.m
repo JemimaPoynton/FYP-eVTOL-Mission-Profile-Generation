@@ -30,7 +30,7 @@ classdef thrust
          function obj = setAngle(obj, angles)
          % function setAngle sets the orientation of the rotor, i.e. thrust
          % vectoring
-         obj.setAngle = angles;
+         obj.ang = angles;
          end
      end
 end
