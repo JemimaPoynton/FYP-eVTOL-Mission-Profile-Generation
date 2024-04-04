@@ -100,7 +100,7 @@ forces = [FTb; Fgb; Fab; Rbe*Fb];
 aero = [CL; CD; Cm];
 uvw_e = Rbe*X(1:3);
 
-xd = explicitFO(Fb, Mcg, I, X, m);
+xd = explicitFO(Fb, Mcg, I, X, m)';
 
 end
 
@@ -117,3 +117,5 @@ function C = applyDeriv(C0, Ca, Cb, Cn, Cp, Cq, Cr, u, alpha, beta, pqr, nd)
     C = C_nc + sum(C_c);
 
 end
+
+

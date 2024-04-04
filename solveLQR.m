@@ -5,7 +5,7 @@ load('testData].mat', 'X', 'U')
 %% Set Variables
 xref = X(:,32);
 uref = U(:,32);
-dx = 1e-2;
+dx = 1e-6;
 
 % define dynamics function wrt control input u and state x
 func = @(X,u)aeroDyn_ind(coeff, u', 1.225, X, referenceGeo, VX4.m, thrustobj2struct(VX4, zeros(1,4)), VX4.CG);
