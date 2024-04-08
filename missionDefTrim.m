@@ -15,10 +15,11 @@ endL = [220 + zeros(1, N); 30 + zeros(1, N); linspace(22, 0, N)];
 
 mission.xyz = [initTO transitionTO cruise transitionL endL];
 mission.N = N; % points on mission sections
-mission.secTime = [10 30 60 30 10];
+mission.secTime = [10 30 60 30 400];
 mission.st = 5; % number of stages
-mission.rotorTilt = [];
+% mission.rotorTilt = [];
 mission.rho = 1.225;
+mission.modes = ['v' 't' 'c' 't' 'v'];
 
 plot3(mission.xyz(1,:), mission.xyz(2,:), mission.xyz(3,:))
 grid on
@@ -65,5 +66,4 @@ trim = optimiseTrimMission(aircraft, coeff, mission, 14, 5);
 createTrimPlots(1, 1, 1, 1, 1, trim)
 
 %% Save Trim Data
-U = trim.U; X = trim.X;
-save('trimUAM1', 'X', 'U')
+save('trimUAM1','trim')

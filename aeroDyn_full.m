@@ -29,13 +29,14 @@ EA = X(7:end);
 CL = applyDeriv(coeff.CL0, coeff.CLa, coeff.CLb, coeff.CLn, 0, coeff.CLq, 0, u, alpha, beta, pqr, ndc);
 
 % Drag 
-CD = applyDeriv(coeff.CD0, coeff.CDa, coeff.CDb, coeff.CDn, 0, 0, 0, u, alpha, beta, pqr, ndc);
+CD = applyDeriv(coeff.CD0, coeff.CDa, coeff.CDb, coeff.CDn, 0, 0, 0, u, abs(alpha), beta, pqr, ndc);
 
 % Sideforce
 CY = applyDeriv(0, coeff.CYa, coeff.CYb, coeff.CYn, coeff.CYp, 0, coeff.CYr, u, alpha, beta, pqr, ndb);
 
-if abs(alpha) > 20*(pi/180)
+if abs(alpha) > 14.5*(pi/180)
     CL = 0;
+    CD = coeff.CD0;
 end
 
 %% Rotate wind to body
@@ -59,7 +60,7 @@ Cm = applyDeriv(coeff.Cm0, coeff.Cma, coeff.Cmb, coeff.Cmn, 0, coeff.Cmq, 0, u, 
 % Yaw
 Cn = applyDeriv(0, coeff.Cna, coeff.Cnb, coeff.Cnn, coeff.Cnp, 0, coeff.Cnr, u, alpha, beta, pqr, ndb);
 
-if abs(alpha) > 20*(pi/180)
+if abs(alpha) > 14.5*(pi/180)
     Cm = 0;
 end
 

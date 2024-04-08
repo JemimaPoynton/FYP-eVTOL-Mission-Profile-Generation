@@ -1,14 +1,17 @@
 %% Load Trim Points
 % get the trim data xref and uref
-load('testData].mat', 'X', 'U')
+load('trimUAM1', 'X', 'U')
 
 %% Set Variables
-xref = X(:,32);
-uref = U(:,32);
-dx = 1e-6;
+X = reshape(X,size(X,1),[]); % reshape to linear indices (no stages)
+U = reshape(U,size(U,1),[]);
+
+xref = X(:,1);
+uref = U(:,1);
+dx = 1e-3;
 
 % define dynamics function wrt control input u and state x
-func = @(X,u)aeroDyn_ind(coeff, u', 1.225, X, referenceGeo, VX4.m, thrustobj2struct(VX4, zeros(1,4)), VX4.CG);
+func = @(X,u)aeroDyn_full(coeff, u', 1.225, X, referenceGeo, VX4.m, thrustobj2struct(VX4, zeros(1,4)), VX4.CG, VX4.I);
 
 %% Run Lineariser
 [A, B] = lineariseTrim(func, xref, uref, dx, VX4, 3);

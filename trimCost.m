@@ -20,7 +20,7 @@ alpha = atan2(X(3), X(1));
 beta = atan2(X(2), X(1));
 
 %% Calculate State Derivatives
-[Fb,Mcg] = aeroDyn(coeff, U', alpha, beta, V, rho, X, refGeo, m, thrust, cg);
+[Fb,Mcg] = aeroDyn_ind(coeff, U', rho, X, refGeo, m, thrust, cg);
 xdot = explicitFO(Fb, Mcg, I, X, m);
 
 % Rbe = body2earth(X(7), X(8), X(9));

@@ -1,0 +1,18 @@
+function K = createGainMat(sysMat, QRfile, trimfile)
+% function createGainMat creates longitudinal and lateral gain matrices for
+% a reference scheduled controller
+
+stages = dictionary('v',0,'t',1,'c',2); % dictionary to enable lettered modes, without if statements
+
+for i = 1:length(sysMat)
+    sys = sysMat(i);
+
+    load(QRfile, 'Q', 'R')
+    load(trimfile, 'trim')
+
+    stg = ceil(i/trim.Np); % select stage
+    
+
+    k = lqr(sys{1,1}, Q(:,:,idx), R(:,:,idx));
+    K(:,:,i) = k;
+end

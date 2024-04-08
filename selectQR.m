@@ -4,16 +4,17 @@ load('trimUAM1', 'X', 'U')
 X = reshape(X,size(X,1),[]); % reshape to linear indices (no stages)
 U = reshape(U,size(U,1),[]);
 
-Xe = X(:,2);
-Xes = X(:,1);
-Ue = U(:,2);
+Xe = X(:,5);
+Xes = X(:,4);
+Ue = U(:,5);
 
 %% Linearise Trim Points
 sysMat = lineariseTrimFull(VX4, referenceGeo, coeff, 'trimUAM1', 1e-3);
-sys = sysMat{35};
+sys = sysMat{5};
 
 %% 
-opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf', 'FunctionTolerance', 1e-1, 'SwarmSize', 100);
+opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf', ...
+    'SwarmSize', 100, 'MaxIterations', 400);
 lb = zeros(size(sys.A,1),1);
 ub = ones(size(sys.A,1),1)*30;
 

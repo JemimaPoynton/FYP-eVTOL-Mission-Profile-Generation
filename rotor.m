@@ -4,6 +4,8 @@ classdef rotor < thrust
         rpm(1,1) {mustBeReal, mustBeFinite} = 0;
         solidity(1,1) {mustBeReal, mustBeFinite} = 0;
         maxdef = [1 -1]
+        kt = 0.00613; % default
+        kb = 0.0001; 
     end
 
     methods
@@ -16,13 +18,6 @@ classdef rotor < thrust
             obj.pos = pos;
             obj.ang = ang;
             obj.maxThrust = maxThrust;
-        end
-
-        function thrust = calculateThrust(obj)
-        end
-        
-        function obj = setrpm(obj, rpm, demandThrust)
-            obj.rpm = rpm;
         end
     end
 end
