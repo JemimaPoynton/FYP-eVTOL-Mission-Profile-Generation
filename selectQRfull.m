@@ -4,9 +4,10 @@ load('trimUAM1', 'trim')
 X = reshape(trim.X,size(trim.X,1),[]); % reshape to linear indices (no stages)
 U = reshape(trim.U,size(trim.U,1),[]);
 
-idx = [7 21 36]; % indices of analysis points (1 sample from each mode)
+idx = [3, 15, 22, 28; 
+       8, 20, 27, 33]; % indices of analysis points (1 sample from each mode)
 
-sysMat = lineariseTrimFull(VX4, referenceGeo, coeff, 'trimUAM1', 1e-3);
+sysMat = lineariseTrimFull(VX4, referenceGeo, coefficients, 'trimUAM1', 1e-4);
 
 % interpolate between trim points
 for i = 1:size(X,1)
@@ -19,10 +20,10 @@ Xes = X(:,1);
 [Q, R] = solveQR(sysMat, idx, X, U);
 
 %% Save Results in File
-save('QRvals.mat', 'Q', 'R', 'idx')
+save('QRvalsEdgeCases.mat', 'Q', 'R', 'idx')
 
 %% Create Gain Matrix
-K = createGainMat(sysMat, 'QRvals.mat', 'trimUAM1');
+K = createGainMat(sysMat, 'QRvalsEdgeCases.mat', 'trimUAM1');
 
 % X = Xint;
 

@@ -4,6 +4,7 @@ aircraft = VX4;
 %% Define a Mission Profile
 mission = struct();
 N = 1000;
+Np = 14;
 
 initTO = [zeros(1, N); zeros(1, N); linspace(0, 20, N)];
 transitionTO = [linspace(0, 30, N); zeros(1, N); 20 + 5.*(1 - exp((-(linspace(0, 10, N)/6).^3)))];
@@ -26,6 +27,8 @@ grid on
 axis equal
 
 mission.cruiseVel = 20;
+
+idx = round(linspace(1, N-1, Np),0);
 
 %% Define Rotor Deflection Through Profile
 mission.rdef = zeros(size(dist(idx)));
@@ -60,7 +63,7 @@ mission.alphaLim([1 5],:) = pi/2;
 mission.alphaLim(2:4,:) = 14.5*(pi/180);
 
 %% Calculate Mission Trim
-trim = optimiseTrimMission(aircraft, coeff, mission, 14, 5);
+trim = optimiseTrimMission(aircraft, coefficients, mission, Np, 5);
 
 %% Plot
 createTrimPlots(1, 1, 1, 1, 1, trim)

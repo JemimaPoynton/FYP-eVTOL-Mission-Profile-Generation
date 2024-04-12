@@ -24,7 +24,7 @@ func = @(Z)trimCost(Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, traj, rpitch)
 uwRatio = atan(alphaLim);
 
 lb = [0 -0.25*Va -Va*uwRatio -pi/4 -pi/4 -pi/4 -0.52 -0.52 -0.52 0 0 0 0]';
-ub = [+Va +0.25*Va +Va*uwRatio +pi/4 +pi/4 +pi/4 0.52 0.52 0.52 150*9.81 150*9.81 150*9.81 150*9.81]';
+ub = [+Va +0.25*Va +Va*uwRatio +pi/4 +pi/4 +pi/4 0.52 0.52 0.52 7000 7000 7000 7000]';
 
 %% Solve
 opts = optimset('PlotFcns','optimplotfval','TolX',1e-30, 'MaxIter', 100000, 'MaxFunEvals', 100000);

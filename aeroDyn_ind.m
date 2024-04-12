@@ -72,15 +72,23 @@ FTb = zeros(3, length(thrust.Tinit));
 MTcg = zeros(3, length(thrust.Tinit));
 
 for i = 1:length(thrust.Tinit)
+    kt = thrust.kt(i,:);
+    kb = thrust.kb(i,:);
+    dir = thrust.dir(i,:);
+
     idx = length(coeff.CLn) + 1 + (i-1)*4; % index of thrust-deflection pairs for thrust objects
     FTt = [0      ; % Thrust in rotor plane
            0      ;
-           -u(idx)];
+           -kt*u(idx)^2];
+
+    MTy = [0      ;
+           0      ;
+           dir*kb*(u(idx)^2)];
     
     Rrb = transMatrix([u(idx+1) u(idx+2) u(idx+3)].*[1 1 1]); % rotation matrix from rotor plane to body, first converting to geometric axis
 
     FTb(:,i) = Rrb*FTt; % Rotate to body frame, switching from geometric to dynamic coordinates
-    MTcg(:,i) = cross(thrust.xyz_tr(i,:) - cg, FTb(:,i));
+    MTcg(:,i) = Rrb*MTy + cross(thrust.xyz_tr(i,:) - cg, FTb(:,i))';
 end
 
 FTb = sum(FTb,2);

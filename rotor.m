@@ -4,8 +4,9 @@ classdef rotor < thrust
         rpm(1,1) {mustBeReal, mustBeFinite} = 0;
         solidity(1,1) {mustBeReal, mustBeFinite} = 0;
         maxdef = [1 -1]
-        kt = 0.00613; % default
-        kb = 0.0001; 
+        kt = 3.13e-5; % default
+        kb = 7.5e-7;
+        dir(1,1){mustBeMember(dir,[-1 1])} = 1;
     end
 
     methods
