@@ -3,9 +3,10 @@ load('trimUAM1', 'trim')
 
 X = reshape(trim.X,size(trim.X,1),[]); % reshape to linear indices (no stages)
 U = reshape(trim.U,size(trim.U,1),[]);
+Ut = [U(1:3,:); reshape(trim.Ut, size(trim.Ut,1),[])];
 
-idx = [3, 15, 22, 28; 
-       8, 20, 27, 33]; % indices of analysis points (1 sample from each mode)
+idx = [8, 20, 35, 43; 
+       15, 21, 38, 49]; % indices of analysis points (1 sample from each mode)
 
 sysMat = lineariseTrimFull(VX4, referenceGeo, coefficients, 'trimUAM1', 1e-4);
 
@@ -17,7 +18,7 @@ end
 Xes = X(:,1);
 
 %% Iterate
-[Q, R] = solveQR(sysMat, idx, X, U);
+[Q, R] = solveQR(sysMat, idx, X, Ut);
 
 %% Save Results in File
 save('QRvalsEdgeCases.mat', 'Q', 'R', 'idx')
@@ -31,3 +32,18 @@ K = createGainMat(sysMat, 'QRvalsEdgeCases.mat', 'trimUAM1');
 missionruntime = mission;
 missionruntime = rmfield(missionruntime, 'modes');
 missionruntime = rmfield(missionruntime, 'rotorTilt');
+
+%% 
+t = linspace(0, mission.secTime(end), size(X,2));
+tl = linspace(0, mission.secTime(end), 3000);
+
+xvec = zeros(9,3000);
+uvec = zeros(9,3000);
+
+for i = 1:9
+    xvec(i,:) = interp1(t, X(i,:), tl);
+end
+
+for i = 1:9
+    uvec(i,:) = interp1(t, Ut(i,:), tl);
+end

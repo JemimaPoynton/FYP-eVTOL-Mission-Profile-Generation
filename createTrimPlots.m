@@ -1,4 +1,4 @@
-function createTrimPlots(f, s, a, ev, u, trim)
+function createTrimPlots(f, s, a, ev, u, t, trim)
 % function createPlots generates plot relating to optimisation of mission
 % trim. The inputs are boolean corresponding to plots of
 %
@@ -101,4 +101,14 @@ if u == 1
     
     xlabel('Distance [m]')
     ylabel('Deflection [deg]')
+end
+
+%% Plot torque
+if t == 1
+    figure()
+    plot(dist(idxf(1:Np*stg)), [squeeze(trim.Ut(4:6,:,1)) squeeze(trim.Ut(4:6,:,2)) squeeze(trim.Ut(4:6,:,3)) squeeze(trim.Ut(4:6,:,4)) squeeze(trim.Ut(4:6,:,4))])
+    grid on
+    xlabel('Distance [m]')
+    ylabel('Torque [Nm]')
+    legend('Torque x', 'Torque y', 'Torque z')
 end

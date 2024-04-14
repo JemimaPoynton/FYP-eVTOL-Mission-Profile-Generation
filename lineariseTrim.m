@@ -19,7 +19,7 @@ for i = 1:nx
     A(:,i) = dfdx(func_x, xref, dx, aircraft, i, highOrd); 
 end
 
-%% Calculate B
+%% Calculate B for [... T dr dr dr ...]
 func_u = @(u)func(xref, u); % define function for variation in u
 
 B = zeros(nx, nu);
@@ -27,4 +27,5 @@ B = zeros(nx, nu);
 for j = 1:nu
     B(:,j) = dfdx(func_u, uref, dx, aircraft, j, highOrd); 
 end
-end
+
+

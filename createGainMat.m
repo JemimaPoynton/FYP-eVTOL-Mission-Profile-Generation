@@ -5,7 +5,7 @@ function K = createGainMat(sysMat, QRfile, trimfile)
 stages = dictionary('v',1,'t',2, 'T', 3,'c', 4); % dictionary to enable lettered modes, without if statements
 
 for i = 1:length(sysMat)
-    sys = sysMat(i);
+    sys = sysMat{i};
 
     load(QRfile, 'Q', 'R')
     load(trimfile, 'trim')
@@ -19,6 +19,6 @@ for i = 1:length(sysMat)
 
     QR_idx = stages(trim.modes(stg));
 
-    k = lqr(sys{1,1}, Q(:,:,QR_idx), R(:,:,QR_idx));
+    k = lqr(sys, Q(:,:,QR_idx), R(:,:,QR_idx));
     K(:,:,i) = k;
 end

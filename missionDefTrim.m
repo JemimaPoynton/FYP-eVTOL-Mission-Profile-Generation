@@ -4,7 +4,7 @@ aircraft = VX4;
 %% Define a Mission Profile
 mission = struct();
 N = 1000;
-Np = 14;
+Np = 20;
 
 initTO = [zeros(1, N); zeros(1, N); linspace(0, 20, N)];
 transitionTO = [linspace(0, 30, N); zeros(1, N); 20 + 5.*(1 - exp((-(linspace(0, 10, N)/6).^3)))];
@@ -29,6 +29,7 @@ axis equal
 mission.cruiseVel = 20;
 
 idx = round(linspace(1, N-1, Np),0);
+idxf = [idx idx+mission.N idx+mission.N*2 idx+mission.N*3 idx+mission.N*4];
 
 %% Define Rotor Deflection Through Profile
 mission.rdef = zeros(size(dist(idx)));
@@ -54,7 +55,7 @@ mission.vel(4,:) = linspace(25, 0.001, length(idx));
 mission.vel(5,:) = linspace(0.001, 10, length(idx));
 
 figure()
-plot(dist(idxf), [vel(1,:) vel(2,:) vel(3,:) vel(4,:) vel(5,:)])
+plot(dist(idxf), [mission.vel(1,:) mission.vel(2,:) mission.vel(3,:) mission.vel(4,:) mission.vel(5,:)])
 
 %% Define Angle of Attack Limits (Stall)
 mission.alphaLim = zeros(size(dist(idx))); % Assuming that stall effects are negiligible in hover
@@ -66,7 +67,7 @@ mission.alphaLim(2:4,:) = 14.5*(pi/180);
 trim = optimiseTrimMission(aircraft, coefficients, mission, Np, 5);
 
 %% Plot
-createTrimPlots(1, 1, 1, 1, 1, trim)
+createTrimPlots(1, 1, 1, 1, 1, 1, trim)
 
 %% Save Trim Data
 save('trimUAM1','trim')

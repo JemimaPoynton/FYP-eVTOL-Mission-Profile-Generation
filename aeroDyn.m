@@ -1,4 +1,4 @@
-function [Fb,Mcg, forces, aero, uvw_e] = aeroDyn(coeff, u, alpha, beta, V, rho, X, refGeo, m, thrust, cg)
+function [Fb,Mcg, forces, aero, uvw_e, MTcg] = aeroDyn(coeff, u, alpha, beta, V, rho, X, refGeo, m, thrust, cg)
 % Function aeroDyn simulates .... Independent version (i.e. doesn't need alpha/beta/V inputs)
 
 %% Calculate Airflow

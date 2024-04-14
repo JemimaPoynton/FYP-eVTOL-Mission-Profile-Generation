@@ -1,4 +1,4 @@
-function [U, X, forces, aero, uvw_e, alpha, failed] = trimSolver(aircraft, coeff, rho, Va, traj, rpitch, alphaLim)
+function [U, X, forces, aero, uvw_e, alpha, MTcg, failed] = trimSolver(aircraft, coeff, rho, Va, traj, rpitch, alphaLim)
 % function trimSolver solves the overactuated trim optimisation problem for
 % aircraft with state vector 'X' in the form [u v w p q r psi theta phi]'
 
@@ -69,5 +69,5 @@ V = sqrt(X(1)^2 + X(2)^2 + X(3)^2);
 alpha = atan2(X(3), X(1));
 beta = atan2(X(2), X(1));
 
-[Fb, ~, forces, aero, uvw_e] = aeroDyn(coeff, U', alpha, beta, V, rho, X, refGeo, m, thrustIn, cg);
+[Fb, ~, forces, aero, uvw_e, MTcg] = aeroDyn(coeff, U', alpha, beta, V, rho, X, refGeo, m, thrustIn, cg);
 end

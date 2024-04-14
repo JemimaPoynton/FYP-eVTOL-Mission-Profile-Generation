@@ -1,29 +1,23 @@
-function [Q, R] = solveQR(sysMat, idx, ub_)
+function [Q, R] = solveQR(sysMat, idx, X, U, ub_)
 % function solveQR determines the optimum Q and R matrices for LQR
 % controller design for the points idx in the matrix of linearised systems
 % in sysMat, where idx represents 1 point on each mode (VTOL/transition/cruise)
 
 %% Setup
-if ~exists('ub')
-    ub_ = 30; % default
+if ~exist('ub', 'var')
+    ub_ = 1000; % default
 end
 
-for i = 1:length(idx)
-    Xe = X(:,idx+1); % desired equilibrium state
-    Xes = X(:,idx); % current equilibrium state
-    Ue = U(:,idx+1); % baseline trim input 
-    
-    sys = sysMat{idx+1}; % extract system
-    
+for i = 1:length(idx(1,:))  
     opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf', ...
-        'SwarmSize', 100, 'MaxIterations', 400);
+                    'FunctionTolerance', 1, 'MaxIterations',8);
 
-    lb = zeros(size(sys.A,1),1);
-    ub = ones(size(sys.A,1),1)*ub_;
+    lb = ones(size(sysMat{1,1}.A,1),1);
+    ub = ones(size(sysMat{1,1}.A,1),1)*ub_;
     
-    func = @(QR)QRerr(QR, sys);
-    QR(i,:) = particleswarm(func, (size(sys.A,1)), lb, ub, opts);
-end
+    func = @(QR)QRerr(QR, sysMat, idx(:,i), X, U);
+    QR(i,:) = particleswarm(func, size(sysMat{1,1}.A,1), lb, ub, opts);
 
-Q = eye(size(sys.A,1)).*QR(i,1:size(sys.A,1))';
-R = eye(size(sys.B,2)).*1';  % extract from optimisation
+    Q(:,:,i) = eye(size(sysMat{1,1}.A,1)).*QR(i,1:size(sysMat{1,1}.A,1))';
+    R(:,:,i) = eye(size(sysMat{1,1}.B,2)).*1';  % extract from optimisation
+end

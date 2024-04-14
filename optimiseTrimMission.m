@@ -7,7 +7,7 @@ function [trim, gamma, courseAngle, totalDist] = optimiseTrimMission(aircraft, c
 for i = 1:stg
     for j = 1:Np
         traj = [gamma(i,j) courseAngle(i,j)];
-        [U(:,j,i), X(:,j,i), forces(:,j,i), aero(:,j,i), uvw_e(:,j,i), alpha(:,j,i), checkfail(:,j,i)] = trimSolver(aircraft, coeff, mission.rho, mission.vel(i,j), traj, mission.rdef(i,j), mission.alphaLim(i,j));
+        [U(:,j,i), X(:,j,i), forces(:,j,i), aero(:,j,i), uvw_e(:,j,i), alpha(:,j,i), MTcg(:,j,i), checkfail(:,j,i)] = trimSolver(aircraft, coeff, mission.rho, mission.vel(i,j), traj, mission.rdef(i,j), mission.alphaLim(i,j));
     end
 end
 
@@ -16,6 +16,18 @@ trim.dist = dist; trim.idxf = idxf; trim.Np = Np; trim.stg = stg;
 trim.U = U; trim.X = X; trim.forces = forces; trim.aero = aero; trim.uvw_e = uvw_e; trim.alpha = alpha;
 trim.modes = mission.modes; % load in types
 
+%% Create control mixed (VTOL) trim
+Fx = forces(1,:,:); Fy = forces(2,:,:); Fz = forces(3,:,:); 
+Tx = MTcg(1,:,:); Ty = MTcg(2,:,:); Tz = MTcg(3,:,:);
+
+trim.Ut = [Fx;
+           Fy;
+           Fz;
+           Tx;
+           Ty;
+           Tz];
+
+%% Check for Failed Trim
 if sum(sum(checkfail)) > 0 % handle failed trim
     [idx1, idx2] = find(squeeze(checkfail) == 1);
     disp(" ")

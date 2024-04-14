@@ -1,7 +1,7 @@
 function J = QRerr(QR, sysMat, idx, X, U)
 %% Setup Q and R
 Q = eye(size(sysMat{1,1}.A,1)).*QR(1:size(sysMat{1,1}.A,1))';
-R = eye(size(sysMat{1,1}.B([1:4 8 12 16]),2)).*1';
+R = eye(size(sysMat{1,1}.B,2)).*1';
 
 W = [2 2 2   4 4 4   0.1 0.1 0.1]; % Error weighting matrix
 
@@ -16,9 +16,6 @@ try
     assignin('base', 'Ue', Ue)
     
     sys = sysMat{idx(1)+1}; % extract system
-    B = sys.B(:,[1:4 8 12 16]);
-    D = sys.D(:,[1:4 8 12 16]);
-    sys = ss(sys.A, B, sys.C, D);
 
     K = lqr(sys, Q, R);
 
@@ -28,7 +25,7 @@ try
     warning('off', 'Stateflow:translate:SFcnBlkNotTunableParamChangeFastRestart')
 
     tic1 = tic;
-    out1 = sim('Cruise_Model_V8_QRTuning.slx');
+    out1 = sim('Cruise_Model_V8_QRTuning_FM.slx');
     toc1 = toc(tic1);
 
     Xe = X(:,idx(2)+1); % desired equilibrium state
@@ -40,16 +37,13 @@ try
     assignin('base', 'Ue', Ue)
     
     sys = sysMat{idx(2)+1}; % extract system
-    B = sys.B(:,[1:4 8 12 16]);
-    D = sys.D(:,[1:4 8 12 16]);
-    sys = ss(sys.A, B, sys.C, D);
 
     K = lqr(sys, Q, R);
 
     assignin('base','K',K)
 
     tic2 = tic;
-    out2 = sim('Cruise_Model_V8_QRTuning.slx');
+    out2 = sim('Cruise_Model_V8_QRTuning_FM.slx');
     toc2 = toc(tic2);
 
     warning('on', 'MATLAB:callback:error')
@@ -58,7 +52,7 @@ try
     [~, idx1] = min(abs(out1.error.Time - 5));
     [~, idx2] = min(abs(out2.error.Time - 5));
 
-    if toc1 >= 1 || toc2 >= 1
+    if toc1 >= 10 || toc2 >= 10
         J = 1e9;
     else
         J = abs(sum((out1.error.Data(end,:) - (out1.error.Data(idx1,:))).*W)) + ...
