@@ -5,10 +5,10 @@ X = reshape(trim.X,size(trim.X,1),[]); % reshape to linear indices (no stages)
 U = reshape(trim.U,size(trim.U,1),[]);
 Ut = [U(1:3,:); reshape(trim.Ut, size(trim.Ut,1),[])];
 
-idx = [8, 20, 35, 43; 
-       15, 21, 38, 49]; % indices of analysis points (1 sample from each mode)
+idx = [8, 20, 30, 41; 
+       15, 21, 36, 55]; % indices of analysis points (1 sample from each mode)
 
-sysMat = lineariseTrimFull(VX4, referenceGeo, coefficients, 'trimUAM1', 1e-4);
+sysMat = lineariseTrimFull(VX4, referenceGeo, coefficients, 'trimUAM1', 1e-5);
 
 % interpolate between trim points
 for i = 1:size(X,1)
@@ -47,3 +47,5 @@ end
 for i = 1:9
     uvec(i,:) = interp1(t, Ut(i,:), tl);
 end
+
+%% Plot Trajectory Tracking

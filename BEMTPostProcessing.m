@@ -1,0 +1,3 @@
+aircraft = VX4;
+
+%% 
