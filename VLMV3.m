@@ -107,36 +107,6 @@ distribution.cy = [control.xyz, cy]; % store local distribution
 coeff.CD = CD; coeff.CY = CY; coeff.CL = CL; 
 coeff.Cl = Cl; coeff.Cm = Cm; coeff.Cn = Cn;
 
-%% Get local distribution (spanwise)
-% [Y, idx_y] = sort(control.xyz(:,2));
-% [X, idx_x] = sort(control.xyz(:,1));
-% x= [];
-% 
-% idx = 0;
-% 
-% for m = 1:size(lift,1) % loop through each component
-%     for n = 1:size(lift,2)
-%         clear cl_mn
-%     
-%         x_2d = lift(m,n).mesh.x;
-%         y_2d = lift(m,n).mesh.y;
-%         z_2d = lift(m,n).mesh.z;
-% 
-%         idx = (m-1)*size(lift,2) + n;
-% 
-%         for j = 1:N_obj(idx,1)
-%             cl_mn(:,j) = cl((j-1)*N_obj(idx,2)+1:j*N_obj(idx,2));
-%         end
-%     
-%         for i = 1:N_obj(idx,2)
-%             x_ = (x_2d(:,i) + x_2d(:,i+1))/2;
-%             c_ = diff(x_);
-%             cl_n(i,idx) = sum(cl_mn(:,i).*c_);
-%         end
-%     end
-%    
-% end
-
 %% Plots
 if plotBool == 1
     figure()
