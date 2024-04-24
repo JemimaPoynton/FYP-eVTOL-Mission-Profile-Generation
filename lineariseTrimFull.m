@@ -12,7 +12,6 @@ Ut = [U(1:3,:); reshape(trim.Ut,size(trim.Ut,1),[])];
 sysMat = cell(size(X,2),1);
 
 %% Iterate
-
 for i = 1:size(X,2)
     xref = X(:,i);
     uref = Ut(:,i);
@@ -21,7 +20,7 @@ for i = 1:size(X,2)
     func = @(X,u)aeroDyn_MF(coeff, u', 1.225, X, referenceGeo, aircraft.m, thrustobj2struct(aircraft, zeros(1,4)), aircraft.CG, aircraft.I); 
     [A, B] = lineariseTrim(func, xref, uref, dx, aircraft, 3);
 
-    C = eye(size(A,1),size(A,1)); % all states output
+    C = eye(9,9); % all states output
     D = []; % no controls included in output
 
     sysMat(i) = {ss(A,B,C,D)};
