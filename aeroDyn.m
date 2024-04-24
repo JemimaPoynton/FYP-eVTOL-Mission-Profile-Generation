@@ -105,7 +105,7 @@ Rbe = body2earth(X(7), X(8), X(9));
 Fb = FTb + Fgb + Fab;
 Mcg = MTcg + Ma;
 
-forces = [FTb; Fgb; Fab; Fb];
+forces = [FTb; Fgb; Fab; Rbe*Fb];
 aero = [CL; CD; Cm];
 uvw_e = Rbe*X(1:3);
 

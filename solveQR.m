@@ -5,7 +5,7 @@ function [Q, R] = solveQR(sysMat, idx, X, U, ub_)
 
 %% Setup
 if ~exist('ub', 'var')
-    ub_ = 10000; % default
+    ub_ = 1000; % default
 end
 
 for i = 1:length(idx(1,:))  

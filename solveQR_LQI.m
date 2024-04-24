@@ -5,7 +5,7 @@ function [Q, R] = solveQR_LQI(sysMat, idx, X, U, ub_)
 
 %% Setup
 if ~exist('ub', 'var')
-    ub_ = 10000; % default
+    ub_ = 4000; % default
 end
 
 for i = 1:length(idx(1,:))  

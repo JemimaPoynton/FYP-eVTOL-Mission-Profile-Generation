@@ -12,22 +12,17 @@ sysMat = lineariseTrimFull(VX4, referenceGeo, coefficients, 'trimUAM1', 1e-5);
 
 Xes = X(:,1);
 
-%% Iterate for LQI
+%% Iterate
 sysMat_LQI = augmentSys(sysMat);
 [Q, R] = solveQR_LQI(sysMat_LQI, idx, X, Ut);
 
 %% Save Results in File
 save('QRvalsLQI.mat', 'Q', 'R', 'idx')
 
-%% Iterate for LQR
-[Q, R] = solveQR(sysMat, idx, X, Ut);
-
-%% Save Results in File
-save('QRvalsLQR.mat', 'Q', 'R', 'idx')
-
 %% Create Gain Matrix
 Kpi = createGainMat(sysMat_LQI, 'QRvalsLQI.mat', 'trimUAM1');
-K = createGainMat(sysMat, 'QRValsLQR', 'trimUAM1');
+
+% X = Xint;
 
 %% Mission Runtime
 missionruntime = mission;
@@ -50,3 +45,8 @@ for i = 1:9
 end
 
 Xes = X(:,1);
+
+%% Create Augmented Control With Integral
+Kpi = createGainMatLQI(sysMat, 'QRvalsLQI.mat', 'trimUAM1');
+% %K = Kpi(:,1:9,:);
+% Ki = Kpi(:,10:12,:);
