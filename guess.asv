@@ -19,7 +19,7 @@ end
 [~,idx]= min(fval);
 z0 = z0(:,idx);
 
-if fval(idx) > 1
+if fval(idx) > 1e-6
     z0 = zeros(size(z0)); z0(1) = Va;
 end
 

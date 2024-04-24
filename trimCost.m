@@ -5,12 +5,12 @@ function J = trimCost(Z, u, coeff, rho, refGeo, m, thrust, cg, I, traj, rpitch)
 % demand: demand velocity in the earth frame
 
 %% Extract States
-U = [Z(7:9)' Z(10) 0 rpitch 0 ...
-            Z(11) 0 rpitch 0 ...
-            Z(12) 0 rpitch 0 ...
-            Z(13) 0 rpitch 0]';
+U = [Z(5:7)' Z(8) 0 rpitch 0 ...
+            Z(9) 0 rpitch 0 ...
+            Z(10) 0 rpitch 0 ...
+            Z(11) 0 rpitch 0]';
 
-X = [Z(1) 0 Z(3)' 0 0 0 Z(4) Z(5)' Z(6)]';
+X = [Z(1) 0 Z(2)' 0 0 0 Z(3) 0 Z(4)]';
 
 %% Calculate Airflow
 % Assuming no wind disturbance
@@ -18,6 +18,8 @@ X = [Z(1) 0 Z(3)' 0 0 0 Z(4) Z(5)' Z(6)]';
 V = sqrt(X(1)^2 + X(2)^2 + X(3)^2);
 alpha = atan2(X(3), X(1));
 beta = atan2(X(2), X(1));
+
+X(8) = alpha+traj(1);
 
 %% Calculate State Derivatives
 [Fb,Mcg] = aeroDyn_ind(coeff, U', rho, X, refGeo, m, thrust, cg);
