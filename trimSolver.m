@@ -27,10 +27,10 @@ lb = [0 -0.25*Va -Va*uwRatio -pi/4 -pi/4 -pi/4 -0.52 -0.52 -0.52 0 0 0 0]';
 ub = [+Va +0.25*Va +Va*uwRatio +pi/4 +pi/4 +pi/4 0.52 0.52 0.52 7000 7000 7000 7000]';
 
 %% Solve
-opts = optimset('PlotFcns','optimplotfval','TolX',1e-30, 'MaxIter', 100000, 'MaxFunEvals', 100000);
+opts = optimset('PlotFcns','optimplotfval','TolX',1e-60, 'MaxIter', 100000, 'MaxFunEvals', 100000);
 
 z0p_func = @(Z)trimCost_ga(Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, traj, rpitch);
-z0p = guess(z0p_func, lb, ub, 11, Va)';
+z0p = guess(z0p_func, lb, ub, 10, Va)';
 
 z0 = zeros(1,13)';
 z0(1:9) = z0p(1:9);
@@ -69,5 +69,5 @@ V = sqrt(X(1)^2 + X(2)^2 + X(3)^2);
 alpha = atan2(X(3), X(1));
 beta = atan2(X(2), X(1));
 
-[Fb, ~, forces, aero, uvw_e, MTcg] = aeroDyn(coeff, U', alpha, beta, V, rho, X, refGeo, m, thrustIn, cg);
+[Fb, Mcg, forces, aero, uvw_e, MTcg] = aeroDyn(coeff, U', alpha, beta, V, rho, X, refGeo, m, thrustIn, cg);
 end
