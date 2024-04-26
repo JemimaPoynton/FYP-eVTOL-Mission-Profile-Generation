@@ -1,0 +1,89 @@
+clear courseAngle gamma U forces aero uvw_e alpha
+aircraft = VX4;
+
+%% Define a Mission Profile
+mission = struct();
+N = 1000;
+
+initTO = [zeros(1, N); zeros(1, N); linspace(0, 20, N)];
+transitionTO = [linspace(0, 30, N); zeros(1, N); 20 + 5.*(1 - exp((-(linspace(0, 10, N)/6).^3)))];
+
+cruise = [linspace(30, 120, N); linspace(0, 30, N); 25 + zeros(1, N)]; 
+
+transitionL = [linspace(120, 220, N); 30 + zeros(1, N); 25 - 3.*(1 - exp((-(linspace(0, 10, N)/5).^3)))];
+endL = [220 + zeros(1, N); 30 + zeros(1, N); linspace(22, 0, N)];
+
+mission.xyz = [initTO transitionTO cruise transitionL endL];
+mission.N = N; % points on mission sections
+mission.secTime = [10 30 60 30 10];
+mission.st = 5; % number of stages
+mission.rotorTilt = [];
+mission.rho = 1.225;
+
+plot3(mission.xyz(1,:), mission.xyz(2,:), mission.xyz(3,:))
+grid on
+axis equal
+
+mission.cruiseVel = 20;
+
+%% Define Rotor Deflection Through Profile
+mission.rdef = zeros(size(dist(idx)));
+
+mission.rdef([1 5],:) = 0;
+mission.rdef(2,:) = (pi/2)*(1 - exp((-(dist(idx)/10).^3)));
+mission.rdef(3,:) = pi/2;
+mission.rdef(4,:) = (pi/2)*(exp((-(dist(idx)/10).^3)));
+
+figure()
+grid on
+plot(dist(idxf), [mission.rdef(1,:) mission.rdef(2,:) mission.rdef(3,:) mission.rdef(4,:) mission.rdef(5,:)])
+xlabel('Distance along path [m]')
+ylabel('Rotor Tilt ')
+
+%% Define Velocity Profile
+mission.vel = zeros(size(dist(idx)));
+
+mission.vel(1,:) = linspace(10, 0.001, length(idx));
+mission.vel(2,:) = linspace(0.001, 25, length(idx));
+mission.vel(3,:) = 30;
+mission.vel(4,:) = linspace(25, 0.001, length(idx));
+mission.vel(5,:) = linspace(0.001, 10, length(idx));
+
+% plot(dist(idxf), [vel(1,:) vel(2,:) vel(3,:) vel(4,:) vel(5,:)])
+
+%% Define Angle of Attack Limits (Stall)
+mission.alphaLim = zeros(size(dist(idx))); % Assuming that stall effects are negiligible in hover
+
+mission.alphaLim([1 5],:) = pi/2;
+mission.alphaLim(2:4,:) = 14.5*(pi/180);
+
+%% Calculate Course Angle, Trajectory and Distance Points
+
+trim = optimiseTrimMission(aircraft, coeff, mission, 14, 5);
+% Np = 14;
+% [gamma, courseAngle, dist, totalDist, idxf, ~] = getTrajStates(mission, Np, 1);
+% 
+% %% Solve Optimisation
+% stg = 5;
+% 
+% for i = 1:stg
+%     for j = 1:Np
+%         traj = [gamma(i,j) courseAngle(i,j)];
+%         [U(:,i,j), X(:,i,j), forces(:,i,j), aero(:,i,j), uvw_e(:,i,j), alpha(:,i,j), checkfail(:,i,j)] = trimSolver(aircraft, coeff, rho, vel(i,j), traj, mission.rdef(i,j), mission.alphaLim(i,j));
+%     end
+% end
+% 
+% trim = struct(); % store data in structure for easy input to function
+% trim.dist = dist; trim.idxf = idxf; trim.Np = Np; trim.stg = stg;
+% trim.U = U; trim.X = X; trim.forces = forces; trim.aero = aero; trim.uvw_e = uvw_e; trim.alpha = alpha;
+% 
+% if sum(sum(checkfail)) > 0 % handle failed trim
+%     [idx1, idx2] = find(squeeze(checkfail) == 1);
+%     disp(['Trim failed at index ' mat2str([1, idx1, idx2]) ' and distance ' num2str(dist(idxf((idx1-1)*Np + idx2)))])
+% end
+
+%% Plot
+createTrimPlots(1, 1, 1, 1, 1, trim)
+
+%% Save Trim Data
+save('trimUAM1', 'X', 'U')
