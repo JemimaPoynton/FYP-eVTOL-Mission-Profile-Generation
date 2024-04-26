@@ -1,4 +1,4 @@
-function [Fb,Mcg, forces, aero, uvw_e] = aeroDyn_ind(coeff, u, rho, X, refGeo, m, thrust, cg)
+function [Fb,Mcg, forces, aero, uvw_e, MTcg] = aeroDyn_ind(coeff, u, rho, X, refGeo, m, thrust, cg)
 % Function aeroDyn simulates .... Independent version (i.e. doesn't need alpha/beta/V inputs)
 
 %% Calculate Airflow
@@ -37,6 +37,7 @@ CY = applyDeriv(0, coeff.CYa, coeff.CYb, coeff.CYn, coeff.CYp, 0, coeff.CYr, u, 
 if abs(alpha) > 14.5*(pi/180)
     CL = 0;
     CD = coeff.CD0;
+    CY = 0;
 end
 
 %% Rotate wind to body
@@ -62,6 +63,8 @@ Cn = applyDeriv(0, coeff.Cna, coeff.Cnb, coeff.Cnn, coeff.Cnp, 0, coeff.Cnr, u, 
 
 if abs(alpha) > 14.5*(pi/180)
     Cm = 0;
+    Cn = applyDeriv(0, 0, 0, coeff.Cnn, coeff.Cnp, 0, coeff.Cnr, u, alpha, beta, pqr, ndb);
+    Cl = applyDeriv(0, 0, 0, coeff.Cln, coeff.Clp, 0, coeff.Clr, u, alpha, beta, pqr, ndb);
 end
 
 Ma = [b*Cl; c*Cm; b*Cn].*Q*S;
