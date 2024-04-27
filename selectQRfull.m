@@ -8,7 +8,7 @@ Ut = [U(1:3,:); reshape(trim.Ut, size(trim.Ut,1),[])];
 idx = [10, 36, 45, 61; 
        20, 40, 55, 86]; % indices of analysis points (1 sample from each mode)
 
-sysMat = lineariseTrimFull(VX4, referenceGeo, coefficients, 'trimUAM1', 1e-3);
+sysMat = lineariseTrimFull(VX4, referenceGeo, coefficients, 'trimUAM1', 1e-5);
 
 Xes = X(:,1);
 

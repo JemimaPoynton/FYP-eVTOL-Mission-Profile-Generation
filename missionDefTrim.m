@@ -22,6 +22,8 @@ mission.st = 5; % number of stages
 mission.rho = 1.225;
 mission.modes = ['v' 't' 'c' 't' 'v'];
 
+[~, ~, dist, ~, idxf, ~] = getTrajStates(mission, Np, 1);
+
 plot3(mission.xyz(1,:), mission.xyz(2,:), mission.xyz(3,:))
 grid on
 axis equal
@@ -29,7 +31,7 @@ axis equal
 mission.cruiseVel = 20;
 
 idx = round(linspace(1, N-1, Np),0);
-idxf = [idx idx+mission.N idx+mission.N*2 idx+mission.N*3 idx+mission.N*4];
+% idxf = [idx idx+mission.N idx+mission.N*2 idx+mission.N*3 idx+mission.N*4];
 
 %% Define Rotor Deflection Through Profile
 mission.rdef = zeros(size(dist(idx)));

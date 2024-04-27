@@ -61,10 +61,10 @@ Cm = applyDeriv(coeff.Cm0, coeff.Cma, coeff.Cmb, coeff.Cmn, 0, coeff.Cmq, 0, u, 
 % Yaw
 Cn = applyDeriv(0, coeff.Cna, coeff.Cnb, coeff.Cnn, coeff.Cnp, 0, coeff.Cnr, u, alpha, beta, pqr, ndb);
 
-if abs(alpha) > 20*(pi/180)
+if abs(alpha) > 14.5*(pi/180)
     Cm = 0;
-    Cn = 0;
-    Cl = 0;
+    Cn = applyDeriv(0, 0, 0, coeff.Cnn, coeff.Cnp, 0, coeff.Cnr, u, alpha, beta, pqr, ndb);
+    Cl = applyDeriv(0, 0, 0, coeff.Cln, coeff.Clp, 0, coeff.Clr, u, alpha, beta, pqr, ndb);
 end
 
 Ma = [b*Cl; c*Cm; b*Cn].*Q*S;

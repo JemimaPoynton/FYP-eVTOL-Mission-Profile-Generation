@@ -33,7 +33,7 @@ gamma = X(8) - alpha;
 ca = X(9) + beta;
 
 Jtraj = (gamma - traj(1))^2 + (ca - traj(2))^2 + (V - u)^2;
-Jtrim = sum(xdot(1:6).^2)+ 0.0001*sum(MTcg.^2); % cost function
+Jtrim = sum(xdot(1:6).^2)+ 0.000001*sum(MTcg.^2); % cost function
 
 J = Jtrim + Jtraj;
 end
