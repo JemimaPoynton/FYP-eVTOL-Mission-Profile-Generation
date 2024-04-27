@@ -3,7 +3,7 @@ function J = QRerr_LQI(QR, sysMat, idx, X, U)
 Q = eye(size(sysMat{1,1}.A,1)).*QR(1:size(sysMat{1,1}.A,1))';
 R = eye(size(sysMat{1,1}.B,2)).*1';
 
-W = [2 2 2   1 1 1   4 4 4]; % Error weighting matrix
+W = [2 2 2   4 4 4   0.1 0.1 0.1]; % Error weighting matrix
 
 %% Calculate Gain Matrix
 try

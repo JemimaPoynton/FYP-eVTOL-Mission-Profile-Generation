@@ -3,7 +3,7 @@ function J = QRerr(QR, sysMat, idx, X, U)
 Q = eye(size(sysMat{1,1}.A,1)).*QR(1:size(sysMat{1,1}.A,1))';
 R = eye(size(sysMat{1,1}.B,2)).*1';
 
-W = [2 2 2   1 1 1   4 4 4]; % Error weighting matrix
+W = [2 2 2   4 4 4   0.1 0.1 0.1]; % Error weighting matrix
 
 %% Calculate Gain Matrix
 try
@@ -52,7 +52,7 @@ try
     [~, idx1] = min(abs(out1.error.Time - 5));
     [~, idx2] = min(abs(out2.error.Time - 5));
 
-    if toc1 >= 8 || toc2 >= 8
+    if toc1 >= 10 || toc2 >= 10
         J = 1e9;
     else
         J = abs(sum((out1.error.Data(end,:) - (out1.error.Data(idx1,:))).*W)) + ...
