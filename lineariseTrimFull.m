@@ -1,8 +1,6 @@
-function sysMat = lineariseTrimFull(aircraft, referenceGeo, coeff, filename, dx, fr)
+function sysMat = lineariseTrimFull(aircraft, referenceGeo, coeff, filename, dx)
 % function lineariseTrimFull creates a matrix of state-based systems
 % corresponsing to the trim points defined in filename
-% 
-% fr: boolean indicating a free rotor (rotation in all DoF)
 
 %% Load Data
 load(filename, 'trim')
@@ -25,16 +23,6 @@ for i = 1:size(X,2)
 
     C = eye(size(A,1),size(A,1)); % all states output
     D = []; % no controls included in output
-     
-    % if exist('fr', 'var') % check free rotor case
-    %     if fr ~= 1 % seperate lines to prevent exists error
-    %         Btemp = B; % remove Fy control
-    %         B = zeros(9, size(B,2) - 1); B(:,1:end-5) = Btemp(:,1:end-6); B(:,end-4:end) = Btemp(:,[end-5, end-3:end]);
-    %     end
-    % else
-    %         Btemp = B; % remove Fy control
-    %         B = zeros(9, size(B,2) - 1); B(:,1:end-5) = Btemp(:,1:end-6); B(:,end-4:end) = Btemp(:,[end-5, end-3:end]);
-    % end
 
     sysMat(i) = {ss(A,B,C,D)};
 end

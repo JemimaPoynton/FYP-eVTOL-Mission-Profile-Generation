@@ -29,10 +29,25 @@ EA = X(7:end);
 CL = applyDeriv(coeff.CL0, coeff.CLa, coeff.CLb, coeff.CLn, 0, coeff.CLq, 0, u, alpha, beta, pqr, ndc);
 
 % Drag 
-CD = applyDeriv(coeff.CD0, coeff.CDa, coeff.CDb, coeff.CDn, 0, 0, 0, u, abs(alpha), beta, pqr, ndc);
+CD = applyDeriv(coeff.CD0, coeff.CDa, coeff.CDb, coeff.CDn, 0, 0, 0, u, alpha, beta, pqr, ndc);
 
 % Sideforce
 CY = applyDeriv(0, coeff.CYa, coeff.CYb, coeff.CYn, coeff.CYp, 0, coeff.CYr, u, alpha, beta, pqr, ndb);
+
+if abs(alpha) > 14.5*(pi/180)
+    CL = 0;
+    CD = coeff.CD0;
+    CY = 0;
+end
+
+%% Rotate wind to body
+Faw = [-max(CD,0); CY; -CL].*Q*S; % Force vector in the stability frame
+
+Rwb = [cos(alpha)*cos(beta), -cos(alpha)*sin(beta), -sin(alpha);  
+       sin(beta)           ,  cos(beta)           ,  0         ; 
+       cos(beta)*sin(alpha), -sin(alpha)*sin(beta),  cos(alpha)];
+
+Fab = Rwb*Faw; % aerodynamic force on body
 
 %% Aerodynamic Moment about CG
 % In Fb, with moments taken about the centre of gravity
@@ -48,32 +63,11 @@ Cn = applyDeriv(0, coeff.Cna, coeff.Cnb, coeff.Cnn, coeff.Cnp, 0, coeff.Cnr, u, 
 
 if abs(alpha) > 14.5*(pi/180)
     Cm = 0;
+    Cl = 0;
+    Cn = 0;
 end
 
 Ma = [b*Cl; c*Cm; b*Cn].*Q*S;
-
-if abs(alpha) > 14.5*(pi/180)
-    CL = 0;
-    CD = coeff.CD0;
-    Cm = 0;
-else
-    % w = [u(length(coeff.CLn) + 1) u(length(coeff.CLn) + 5) u(length(coeff.CLn) + 9) u(length(coeff.CLn) + 13)];
-    % 
-    % CLfunc = @(alpha)applyDeriv(coeff.CL0, coeff.CLa, coeff.CLb, coeff.CLn, 0, coeff.CLq, 0, u, alpha, beta, pqr, ndc);
-    % CDfunc = @(alpha)applyDeriv(coeff.CD0, coeff.CDa, coeff.CDb, coeff.CDn, 0, 0, 0, u, abs(alpha), beta, pqr, ndc);
-    % Cmfunc = @(alpha)applyDeriv(coeff.Cm0, coeff.Cma, coeff.Cmb, coeff.Cmn, 0, coeff.Cmq, 0, u, alpha, beta, pqr, ndc);
-    % 
-    % [CL, CD, Cm] = applySlipstream(aircraft, aircraft.thrust, alpha, u(length(coeff.CLn) + 3), V, CLfunc, Cmfunc, CDfunc, w);
-end
-
-%% Rotate wind to body
-Faw = [-max(CD,0); CY; -CL].*Q*S; % Force vector in the stability frame
-
-Rwb = [cos(alpha)*cos(beta), -cos(alpha)*sin(beta), -sin(alpha);  
-       sin(beta)           ,  cos(beta)           ,  0         ; 
-       cos(beta)*sin(alpha), -sin(alpha)*sin(beta),  cos(alpha)];
-
-Fab = Rwb*Faw; % aerodynamic force on body
 
 %% Propulsion Effects
 % Moment and forces induced by throttle

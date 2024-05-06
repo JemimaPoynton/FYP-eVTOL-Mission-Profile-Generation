@@ -4,7 +4,7 @@ aircraft = VX4;
 %% Define a Mission Profile
 mission = struct();
 N = 1000;
-Np = 25;
+Np = 30;
 
 initTO = [zeros(1, N); zeros(1, N); linspace(0, 20, N)];
 transitionTO = [linspace(0, 30, N); zeros(1, N); 20 + 5.*(1 - exp((-(linspace(0, 10, N)/6).^3)))];
@@ -89,6 +89,7 @@ clear vh lamh T lami_ lami Cpp Cp CT
 U = reshape(trim.U,size(trim.U,1),[]);
 X = reshape(trim.X,size(trim.X,1),[]);
 alpha = reshape(trim.alpha,size(trim.alpha,1),[]);
+nT = 4;
 
 nC = 3;
 

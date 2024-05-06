@@ -8,9 +8,9 @@ Ut = [U(1:3,:); reshape(trim.Ut, size(trim.Ut,1),[])];
 idx = [10, 36, 45, 61; 
        20, 40, 55, 86]; % indices of analysis points (1 sample from each mode)
 
-sysMat = lineariseTrimFull(VX4, referenceGeo, coefficients, 'trimUAM1', 1e-5);
+sysMat = lineariseTrimFull(VX4, VX4.refGeo, coefficients, 'trimUAM1', 1e-5);
 
-Xes = X(:,1);
+% Xes = X(:,1);
 
 %% Iterate for LQI
 sysMat_LQI = augmentSys(sysMat);
@@ -34,7 +34,7 @@ missionruntime = mission;
 missionruntime = rmfield(missionruntime, 'modes');
 missionruntime = rmfield(missionruntime, 'rotorTilt');
 
-%% 
+%% Setup time in each stage
 t = linspace(0, mission.secTime(end), size(X,2));
 tl = linspace(0, mission.secTime(end), 10000);
 

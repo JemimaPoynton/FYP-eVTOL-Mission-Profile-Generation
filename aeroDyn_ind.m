@@ -48,6 +48,8 @@ Cn = applyDeriv(0, coeff.Cna, coeff.Cnb, coeff.Cnn, coeff.Cnp, 0, coeff.Cnr, u, 
 
 if abs(alpha) > 14.5*(pi/180)
     Cm = 0;
+    Cn = 0;
+    Cl = 0;
 end
 
 Ma = [b*Cl; c*Cm; b*Cn].*Q*S;

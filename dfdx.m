@@ -4,7 +4,7 @@ function J = dfdx(func, xref, dx_s, aircraft, idx, highOrd)
 
 %% Form dx Matrix
 dx = zeros(size(xref));
-dx(idx) = dx_s;
+dx(idx) = dx_s + dx_s*xref(idx);
 
 %% Calculate Derivative
 % Calculate first perturbation points
@@ -15,7 +15,7 @@ xd1 = getxd(func, aircraft.I, aircraft.m, x1)'; % calculate corresponding xdot
 xd_1 = getxd(func, aircraft.I, aircraft.m, x_1)';
 
 if highOrd == 1 % handle different Taylor series approximations
-    J = (xd1 - xd_1)./(2*dx_s);
+    J = (xd1 - xd_1)./(2*dx);
 
 elseif highOrd == 3
     x2 = xref + 2*dx;

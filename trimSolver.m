@@ -68,7 +68,7 @@ for i = 1:nC
     Zu(i + 6) = 1.9.*Zu(i + 6);
     Ju = func(Zu);
 
-    if abs(Ju-J) < 1e-8
+    if abs(Ju-J) < 1e-12
         Z(i + 6) = 0;
     end
 end
