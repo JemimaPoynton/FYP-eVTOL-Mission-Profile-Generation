@@ -94,7 +94,7 @@ classdef wing < liftSurf
         function obj = addCS(obj, CS, distInb)
         % function addCS adds the control surface CS to the wing
         CS = setPosition(CS, distInb, obj);
-        [~, CS] = getChord(CS, 0, obj);
+        [~,CS] = getChord(CS, distInb, obj);
         obj.CSs = [obj.CSs CS];
         end
     end

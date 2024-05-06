@@ -30,8 +30,8 @@ function plotLift(lift, plotCS)
                     handlevis = 'off'; % Handling legend
                 end
                 
-                CT = getChord(CSs_vec(j), CSs_vec(j).span, lift(i));
                 CR = getChord(CSs_vec(j), 0, lift(i));
+                CT = getChord(CSs_vec(j), CSs_vec(j).span, lift(i));
         
                 Lt = transMatrix(ang);
         

@@ -1,4 +1,4 @@
-function createTrimPlots(f, s, a, ev, u, t, trim)
+function createTrimPlots(f, s, a, ev, u, t, trim, kt)
 % function createPlots generates plot relating to optimisation of mission
 % trim. The inputs are boolean corresponding to plots of
 %
@@ -22,6 +22,22 @@ if f == 1
     xlabel('Distance [m]')
     ylabel('Force in Body Frame [N]')
     legend('Thrust (x)', 'Thrust (y)', 'Thrust (z)', 'Aerodynamic Load (x)', 'Aerodynamic Load (y)', 'Aerodynamic Load (z)')
+    % 
+    %     figure()
+    % plot(dist(idxf(1:Np*stg)), [squeeze(forces([10:15],:,1)) squeeze(forces([10:15],:,2)) squeeze(forces([10:15],:,3)) squeeze(forces([10:15],:,4)) squeeze(forces([10:15],:,5))],'black:')
+    % grid on
+    % hold on
+    % % scatter(dist(idxf), zeros(size(dist(idxf))), 'x', 'red')
+    % 
+    %         figure()
+    % plot(dist(idxf(1:Np*stg)), [squeeze(forces([16:18],:,1)) squeeze(forces([16:18],:,2)) squeeze(forces([16:18],:,3)) squeeze(forces([16:18],:,4)) squeeze(forces([16:18],:,5))],'black:')
+    % grid on
+    % hold on
+    % % scatter(dist(idxf), zeros(size(dist(idxf))), 'x', 'red')
+    % 
+    % xlabel('Distance [m]')
+    % ylabel('Force in Body Frame [N]')
+    % legend('Thrust (x)', 'Thrust (y)', 'Thrust (z)', 'Aerodynamic Load (x)', 'Aerodynamic Load (y)', 'Aerodynamic Load (z)')
 end
 
 %% Plot states
@@ -88,10 +104,13 @@ if u == 1
     subplot(2,1,1)
     grid on
     hold on
-    plot(dist(idxf(1:Np*stg)), [squeeze(U([4 8 12 16],:,1)) squeeze(U([4 8 12 16],:,2)) squeeze(U([4 8 12 16],:,3)) squeeze(U([4 8 12 16],:,4)) squeeze(U([4 8 12 16],:,5))]*(180/pi))
-    legend('Rotor 1 (deg)', 'Rotor 2 (deg)', 'Rotor 3 (deg)', 'Rotor 4 (deg)')
-    
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(4,:,1)) squeeze(U(4,:,2)) squeeze(U(4,:,3)) squeeze(U(4,:,4)) squeeze(U(4,:,5))]).^2*kt, 'black:')
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(8,:,1)) squeeze(U(8,:,2)) squeeze(U(8,:,3)) squeeze(U(8,:,4)) squeeze(U(8,:,5))]).^2*kt, 'black--')
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(12,:,1)) squeeze(U(12,:,2)) squeeze(U(12,:,3)) squeeze(U(12,:,4)) squeeze(U(12,:,5))]).^2*kt, 'blue--')
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(16,:,1)) squeeze(U(16,:,2)) squeeze(U(16,:,3)) squeeze(U(16,:,4)) squeeze(U(16,:,5))]).^2*kt, 'b:')
+    legend('Rotor 1', 'Rotor 2', 'Rotor 3', 'Rotor 4')
     ylabel('Thrust [N]')
+    xlabel('Distance [m]')
     
     subplot(2,1,2)
     grid on

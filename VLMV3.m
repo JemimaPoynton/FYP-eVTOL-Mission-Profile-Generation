@@ -1,4 +1,4 @@
-function [lift, coeff, distribution, AC] = VLMV3(lift, mesh, airflow, N, plotBool, xyzref, Sref, Cref, bref, N_obj)
+function [lift, coeff, distribution, AC] = VLMV3(lift, mesh, airflow, N, plotBool, xyzref, Sref, Cref, bref, N_obj, cg)
 % function VLM applies the Vortex Lattice Method to the object 'wing' or 
 % group of wings 'lift' to get the total lift and drag coeffient. Version 3
 % handles the mesh as a linear matrix i.e. meshes 1 -> n, rather than (1,1)
@@ -27,7 +27,7 @@ nodes = mesh.nodes;
 
 sizing = ones(1, N(1));
 
-nVec(:,:,1) = mesh.unitVec(:,1)*sizing;
+nVec(:,:,1) = mesh.unitVec(:,1)*sizing; % normal vector
 nVec(:,:,2) = mesh.unitVec(:,2)*sizing;
 nVec(:,:,3) = mesh.unitVec(:,3)*sizing;
 
@@ -41,11 +41,12 @@ Rbw = body2wind_aerofoil(airflow.alpha, airflow.beta); % rotation matrix from wi
 Uinf = (airflow.U*Rbw)'; % aligning with wind
 
 for m = 1:N(1) % Calculate circulation of each panel i
-    nUinf = Uinf.*(unitVec(m,:)); % get normal component of Uinf 
-    w(m,:) = -nUinf;
+    rot = cross(mesh.control.xyz(m,:)  - cg, [airflow.p airflow.q airflow.r]);
+    nUinf = Uinf.*(unitVec(m,:)) + rot; % get normal component of Uinf 
+    w(m,:) = -sum(nUinf,2);
 end
 
-circ = Ainfl\w(:,3); % circulation on panel i
+circ = Ainfl\w; % circulation on panel i
 
 %% Calculate Resultant Force
 F_n = 0; F_b = 0; L = 0; D = 0;
@@ -94,7 +95,7 @@ end
 M = sum(cross(m_arm,squeeze(dF_b)'));
 CM = M./(q*Sref); % non-dimensionalise by dynamic pressure (NOT COMPLETELY)
 
-Cl = CM(:,1)/bref; Cm = CM(:,2)/Cref; Cn = CM(:,3)/bref; 
+Cl = M(:,1)/(q*Sref*bref); Cm = CM(:,2)/Cref; Cn = CM(:,3)/bref; 
 
 AC = M/L; % distance of aerodynamic centre from reference point
 

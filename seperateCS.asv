@@ -1,0 +1,34 @@
+function [meshs1, meshs2, meshs3] = seperateCS(mesh, nCx, nCy)
+
+meshs1.x = mesh.x(:, nCy);
+meshs1.y = mesh.y(:, nCy);
+meshs1.z = mesh.z(:, nCy);
+meshs1.control.xc = mesh.control.xc(:, nCy(1):nCy(end-1)); 
+meshs1.control.yc = mesh.control.yc(:, nCy(1):nCy(end-1)); 
+meshs1.control.zc = mesh.control.zc(:, nCy(1):nCy(end-1));
+meshs1.nodes.xq = mesh.nodes.xq(:, nCy); 
+meshs1.nodes.yq = mesh.nodes.yq(:, nCy);
+meshs1.nodes.zq = mesh.nodes.zq(:, nCy);
+meshs1.unitVec = mesh.unitVec(:, nCy(1):nCy(end-1),:);
+
+meshs2.x = mesh.x(:, 1:nCy(1));
+meshs2.y = mesh.y(:, 1:nCy(1));
+meshs2.z = mesh.z(:, 1:nCy(1));
+meshs2.control.xc = mesh.control.xc(:, 1:nCy(1)-1);
+meshs2.control.yc = mesh.control.yc(:, 1:nCy(1)-1);
+meshs2.control.zc = mesh.control.zc(end-nCx(end)+1:end, 1:nCy(1)-1);
+meshs2.nodes.xq = mesh.nodes.xq(end-nCx(end):end, 1:nCy(1)); 
+meshs2.nodes.yq = mesh.nodes.yq(end-nCx(end):end, 1:nCy(1));
+meshs2.nodes.zq = mesh.nodes.zq(end-nCx(end):end, 1:nCy(1));
+meshs2.unitVec = mesh.unitVec(end-nCx(end)+1:end, 1:nCy(1)-1,:);
+
+meshs3.x = mesh.x(end-nCx(end):end, nCy(end)+1:end); 
+meshs3.y = mesh.y(end-nCx(end):end, nCy(end)+1:end);
+meshs3.z = mesh.z(end-nCx(end):end, nCy(end)+1:end);
+meshs3.control.xc = mesh.control.xc(end-nCx(end)+1:end, nCy(end)+1:end);
+meshs3.control.yc = mesh.control.yc(end-nCx(end)+1:end, nCy(end)+1:end);
+meshs3.control.zc = mesh.control.zc(end-nCx(end)+1:end, nCy(end)+1:end);
+meshs3.nodes.xq = mesh.nodes.xq(end-nCx(end):end, nCy(end)+1:end);
+meshs3.nodes.yq = mesh.nodes.yq(end-nCx(end):end, nCy(end)+1:end);
+meshs3.nodes.zq = mesh.nodes.zq(end-nCx(end):end, nCy(end)+1:end);
+meshs3.unitVec = mesh.unitVec(end-nCx(end)+1:end, nCy(end)+1:end,:);

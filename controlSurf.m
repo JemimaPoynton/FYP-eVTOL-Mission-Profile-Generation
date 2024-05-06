@@ -8,6 +8,7 @@ classdef controlSurf < liftSurf
         pos(1,3) {mustBeReal, mustBeFinite} = [0 0 0];
         chordRatio(1,1) {mustBeReal, mustBeFinite, mustBeNonnegative}
         edge(1,1) {mustBeMember(edge, ["LE" "TE"])} = "TE"
+        roll(1,1) {mustBeMember(roll, [1 0])} = 0;
     end
 
     methods
@@ -59,10 +60,8 @@ classdef controlSurf < liftSurf
         function [chord, obj] = getChord(obj, dist, liftSurf)
         % function getChord gets the chord at a given dist along the
         % span
-            obj.c = obj.chordRatio*liftSurf.c;
-            CR = ((2*obj.c)/(1 + liftSurf.taper));
-            CT = liftSurf.taper*CR;
-            chord = CR + (CT - CR)*(dist/obj.span);      
+            obj.c = obj.chordRatio*liftSurf.getChord(abs(obj.pos(2)) + obj.span/2);
+            chord =obj.chordRatio*liftSurf.getChord(abs(obj.pos(2)) + dist);      
         end
     end
 end
