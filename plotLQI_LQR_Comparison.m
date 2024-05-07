@@ -1,4 +1,4 @@
-idx = [10, 23, 45];
+idx = [20, 40, 70];
 st = [3, 1, 1];
 Kpif = createGainMat(sysMat_LQI, 'QRvalsLQI.mat', 'trimUAM1');
 Kf = createGainMat(sysMat, 'QRValsLQR', 'trimUAM1');

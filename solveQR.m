@@ -9,9 +9,9 @@ if ~exist('ub', 'var')
 end
 
 for i = 1:length(idx(1,:))  
-    opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf','MaxIterations',5, 'InertiaRange', [0.4 2]);
+    opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf','MaxIterations',5, 'SwarmSize', 10);
 
-    lb = 10*ones(size(sysMat{1,1}.A,1),1);
+    lb = 1*ones(size(sysMat{1,1}.A,1),1);
     ub = ones(size(sysMat{1,1}.A,1),1)*ub_;
     
     func = @(QR)QRerr(QR, sysMat, idx(:,i), X, U);

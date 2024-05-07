@@ -37,7 +37,7 @@ func = @(Z)trimCost(aircraft, Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, tra
 % trCon = @(U)
 
 %% Solve
-opts = optimset('PlotFcns','optimplotfval','TolX',1e-12, 'Algorithm', 'sqp', 'MaxIter', 4000, 'MaxFunEvals', 10e3);
+opts = optimset('PlotFcns','optimplotfval','TolX',1e-30, 'MaxIter', 100000, 'MaxFunEvals', 100000);
 
 z0p_func = @(Z)trimCost_ga(aircraft, Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, traj, rpitch, ub);
 z0p = guess(z0p_func, lb, ub, 11, Va)';

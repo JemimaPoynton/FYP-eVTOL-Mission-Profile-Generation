@@ -49,8 +49,8 @@ try
     warning('on', 'MATLAB:callback:error')
     warning('on', 'Stateflow:translate:SFcnBlkNotTunableParamChangeFastRestart')
 
-    [~, idx1] = min(abs(out1.error.Time - 5));
-    [~, idx2] = min(abs(out2.error.Time - 5));
+    [~, idx1] = min(abs(out1.error.Time - 2));
+    [~, idx2] = min(abs(out2.error.Time - 2));
 
     if toc1 >= 10 || toc2 >= 10
         J = 1e9;

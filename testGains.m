@@ -1,12 +1,13 @@
-idx = 1;
+idx = 20;
 stg = 1;
 
 Xe = X(:,idx+1); % desired equilibrium state
 Xes = X(:,idx); % current equilibrium state
-Ue = U(:,idx+1); % baseline trim input 
+Ue = Ut(:,idx+1); % baseline trim input 
 
+sysMat = augmentSys(sysMat);
 sys = sysMat{idx}; % extract system
-K = lqr(sys, eye(9), eye(7));
+Kpi = lqr(sys, Q(:,:,1), R(:,:,1));
 
 %% Plot output stuff
 % !Probably worth adding some sample rate here!
