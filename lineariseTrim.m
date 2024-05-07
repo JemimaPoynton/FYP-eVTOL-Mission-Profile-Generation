@@ -7,7 +7,7 @@ nx = length(xref);
 nu = length(uref);
 
 if ~exist('highOrd', 'var') % default highest order of Taylors series
-    highOrd = 3;
+    highOrd = 1;
 end
 
 %% Calculate A
