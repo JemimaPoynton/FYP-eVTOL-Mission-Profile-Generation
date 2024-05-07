@@ -1,4 +1,4 @@
-idx = 1;
+idx = 10;
 stg = 1;
 
 Xe = X(:,idx+1); % desired equilibrium state
