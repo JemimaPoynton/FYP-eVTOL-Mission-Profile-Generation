@@ -5,13 +5,13 @@ function [Q, R] = solveQR_LQI(sysMat, idx, X, U, ub_)
 
 %% Setup
 if ~exist('ub', 'var')
-    ub_ = 1000; % default
+    ub_ = 14000; % default
 end
 
 for i = 1:length(idx(1,:))  
-    opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf','MaxIterations',5, 'SwarmSize', 10);
+    opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf','MaxIterations',8, 'SwarmSize', 10);
 
-    lb = (1e-6)*ones(size(sysMat{1,1}.A,1),1);
+    lb = 1*ones(size(sysMat{1,1}.A,1),1);
     ub = ones(size(sysMat{1,1}.A,1),1)*ub_;
     
     func = @(QR)QRerr_LQI(QR, sysMat, idx(:,i), X, U);

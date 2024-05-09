@@ -1,4 +1,4 @@
-function [Xn, idx] = calcStateVF(mission, trim, Xc, p, kc, kg, ca_inf, g_inf)
+function [Xn, idx, gam, gam_d] = calcStateVF(missionxyz, X, Xc, p, kc, kg, ca_inf, g_inf)
 % function calcStateVF calculates the required state to stay on the path
 % defined in mission by applying vector fields
 % 
@@ -6,23 +6,60 @@ function [Xn, idx] = calcStateVF(mission, trim, Xc, p, kc, kg, ca_inf, g_inf)
 % cainf: maximum allowable difference between course angle of straight line
 %        path and demand
 
-if ~exist('ca_inf','var') % set default
-    ca_inf = 0.2;
-elseif isempty(ca_inf)
-    ca_inf = 0.2;
-end
-
-if ~exist('g_inf','var') % set default
-    g_inf = 0.2;
-elseif isempty(g_inf)
-    g_inf = 0.2;
-end
+% if ~exist('ca_inf','var') % set default
+%     ca_inf = 0.2;
+% elseif isempty(ca_inf)
+%     ca_inf = 0.2;
+% end
+% 
+% if ~exist('g_inf','var') % set default
+%     g_inf = 0.2;
+% elseif isempty(g_inf)
+%     g_inf = 0.2;
+% end
+% 
+% X = reshape(trim.X,size(trim.X,1),[]);
 
 %% Calculate Vector Field
-[ca_d, gam_d] = createDemandVecVF(mission, p, kc, kg, ca_inf, g_inf);
+[ca_d, gam_d] = createDemandVecVF(missionxyz, p, kc, kg, ca_inf, g_inf);
+if abs(ca_d) > 0.005
+    ca_d = sign(ca_d)*0.005;
+end
+
+if abs(gam_d) > 0.0005
+    gam_d = sign(gam_d)*0.0005;
+end
+
+%% Get current angular positon
+beta = atan2(Xc(2), Xc(1));
+alpha = atan2(Xc(3), Xc(1));
+Va = sqrt(X(1)^2 + X(2)^2 + X(3)^2);
+
+gam = X(8) - alpha;
+ca = X(9) + beta;
 
 %% Calculate Demand
-Xn = []; % demand state
+roll_dem = sign(ca_d - ca)*min(abs(ca_d - ca), pi/4);
+theta_dem = sign(gam_d - gam)*min(abs(gam_d - gam), pi/4);
+
+if abs(theta_dem) > Xc(8) + 0.1 % account for VTOL demand
+    theta_dem = Xc(8);
+end
+
+Xn = Xc; % demand state
+
+if ~(alpha > pi/4) % handle vtol
+    Xn(7) = roll_dem;
+    % Xn(8) = theta_dem;
+else
+end
+% psi_dem = (9.81/Va)*tan(Xn(7));
+% 
+% Xn(4:6) = [1 0          -sin(Xn(8));
+%            0 cos(Xn(7))  sin(Xn(7))*cos(Xn(8));
+%            0 -sin(Xn(7)) cos(Xn(7))*cos(Xn(8))]*[0 0 psi_dem]';
 
 %% Evaluate Deviation From Current State and Set Index
-idx = []; % index associated with closest demand-trim state
+[~, idx] = min(sum(sqrt((Xn - X).^2))); % index associated with closest demand-trim state
+
+end

@@ -5,11 +5,11 @@ function [Q, R] = solveQR(sysMat, idx, X, U, ub_)
 
 %% Setup
 if ~exist('ub', 'var')
-    ub_ = 1000; % default
+    ub_ = 6000; % default
 end
 
 for i = 1:length(idx(1,:))  
-    opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf','MaxIterations',5, 'SwarmSize', 10);
+    opts = optimoptions('particleswarm', 'Display','iter','PlotFcn','pswplotbestf','MaxIterations',5,  'SwarmSize', 20);
 
     lb = 1*ones(size(sysMat{1,1}.A,1),1);
     ub = ones(size(sysMat{1,1}.A,1),1)*ub_;

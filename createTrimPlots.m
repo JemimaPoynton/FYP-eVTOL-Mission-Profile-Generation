@@ -14,7 +14,7 @@ forces = trim.forces; U = trim.U; uvw_e = trim.uvw_e; X = trim.X; alpha = trim.a
 %% Force plots
 if f == 1
     figure()
-    plot(dist(idxf(1:Np*stg)), [squeeze(forces([1:3 7:9],:,1)) squeeze(forces([1:3 7:9],:,2)) squeeze(forces([1:3 7:9],:,3)) squeeze(forces([1:3 7:9],:,4)) squeeze(forces([1:3 7:9],:,5))])
+    plot(dist(idxf(1:Np*stg)), [squeeze(forces([1:3 7:9],:,1)) squeeze(forces([1:3 7:9],:,2)) squeeze(forces([1:3 7:9],:,3)) squeeze(forces([1:3 7:9],:,4)) squeeze(forces([1:3 7:9],:,5))], 'black:')
     grid on
     hold on
     % scatter(dist(idxf), zeros(size(dist(idxf))), 'x', 'red')

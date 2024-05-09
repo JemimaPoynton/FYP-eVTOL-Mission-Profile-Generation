@@ -14,12 +14,12 @@ for i = 1:length(sysMat)
     QR_idx = stages(trim.modes(stg));
 
     if QR_idx == 2 % if in transition stage
-        tstg = ceil((i-(stg-1)*trim.Np)/(trim.Np/2));
-
-        if trim.modes(stg-1) == 'v' % if previous stage is VTOL
+        if trim.modes(stg-1) == 'v'  % if previous stage is VTOL
+            tstg = ceil((i-(stg-1)*trim.Np)/(trim.Np/2));
             QR_idx = QR_idx + tstg - 1;
         else
-            QR_idx = QR_idx - tstg + 2;
+            tstg = floor((i-(stg-1)*trim.Np)/(trim.Np/2));
+            QR_idx = QR_idx + tstg - 1;
         end
     end
 

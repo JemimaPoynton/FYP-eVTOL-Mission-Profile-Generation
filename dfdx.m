@@ -11,8 +11,12 @@ dx(idx) = dx_s;
 x1 = xref + dx;
 x_1 = xref - dx;
 
-xd1 = getxd(func, aircraft.I, aircraft.m, x1)'; % calculate corresponding xdot
-xd_1 = getxd(func, aircraft.I, aircraft.m, x_1)';
+try
+    xd1 = func(x1); % calculate corresponding xdot
+    xd_1 = func(x_1);
+catch
+    disp('')
+end
 
 if highOrd == 1 % handle different Taylor series approximations
     J = (xd1 - xd_1)./(2*dx_s);
@@ -21,8 +25,8 @@ elseif highOrd == 3
     x2 = xref + 2*dx;
     x_2 = xref - 2*dx;
 
-    xd2 = getxd(func, aircraft.I, aircraft.m, x2)';
-    xd_2 = getxd(func, aircraft.I, aircraft.m, x_2)';
+    xd2 = getxd(func, aircraft.I, aircraft.m, x2);
+    xd_2 = getxd(func, aircraft.I, aircraft.m, x_2);
 
     % Jacobian go brr
     J = (8*(xd1 - xd_1) - (xd2 - xd_2))/(12*dx_s);

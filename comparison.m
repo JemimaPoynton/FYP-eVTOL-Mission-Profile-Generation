@@ -1,5 +1,6 @@
 clear
 
+%% Create Aircraft
 VX4 = configDef;
 VX4.CG = [1.71 0 0];
 VX4.CoL = [2.04 0 0];
@@ -55,6 +56,7 @@ plotConfiguration(VX4)
 
 angles = pi*[1:3:90]/180;
 
+%% Set Airflow conditions
 airflow = struct();
 airflow.U = 1;
 airflow.alpha = 1*pi/180;
@@ -83,7 +85,7 @@ lift2 = meshAll(lift2, [2 2], 1,1);
 
 [lift2, CL2, CD2, CM2, distribution2, AC2] = VLM(lift2, mesh, airflow, N, 1, 0, Sref, Cref);
 
-%%
+%% Run VLM
 lift3 = [wing1 wing2 tail1 tail2 tail3 tail4];
 Sref = 11.88;
 cref = 1.836;
@@ -95,8 +97,6 @@ referenceGeo.cref = cref;
 referenceGeo.bref = bref;
 
 N_obj = [13 10; 13 10; 7 7; 7 7; 5 5; 5 5;]; % number of panels per component in lift3
-
-% [lift3, coeff, distribution3, AC3] = VLMV3(lift3, mesh, airflow, N, 1, [0 0 0], Sref, cref, bref, N_obj);
 
 alpha = ([0.1 0.21 0.3])*pi/180;
 beta = [0 0.1 0.2]*pi/180;

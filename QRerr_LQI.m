@@ -3,7 +3,7 @@ function J = QRerr_LQI(QR, sysMat, idx, X, U)
 Q = eye(size(sysMat{1,1}.A,1)).*QR(1:size(sysMat{1,1}.A,1))';
 R = eye(size(sysMat{1,1}.B,2)).*1';
 
-W = [2 2 2   1 1 1   4 4 4]; % Error weighting matrix
+W = [2 2 2   3 3 3   1 1 1]; % Error weighting matrix
 
 %% Calculate Gain Matrix
 try
@@ -46,17 +46,57 @@ try
     out2 = sim('Cruise_Model_V8_QRTuning_LQI.slx');
     toc2 = toc(tic2);
 
+    Xe = X(:,idx(3)+1); % desired equilibrium state
+    Xes = X(:,idx(3)); % current equilibrium state
+    Ue = U(:,idx(3)+1); % baseline trim input 
+
+    assignin('base','Xe',Xe)
+    assignin('base', 'Xes', Xes)
+    assignin('base', 'Ue', Ue)
+    
+    sys = sysMat{idx(3)+1}; % extract system
+
+    Kpi = lqr(sys, Q, R);
+
+    assignin('base','Kpi',Kpi)
+
+    tic3 = tic;
+    out3 = sim('Cruise_Model_V8_QRTuning_LQI.slx');
+    toc3 = toc(tic3);
+
+    Xe = X(:,idx(4)+1); % desired equilibrium state
+    Xes = X(:,idx(4)); % current equilibrium state
+    Ue = U(:,idx(4)+1); % baseline trim input 
+
+    assignin('base','Xe',Xe)
+    assignin('base', 'Xes', Xes)
+    assignin('base', 'Ue', Ue)
+    
+    sys = sysMat{idx(4)+1}; % extract system
+
+    Kpi = lqr(sys, Q, R);
+
+    assignin('base','Kpi',Kpi)
+
+    tic4 = tic;
+    out4 = sim('Cruise_Model_V8_QRTuning_LQI.slx');
+    toc4 = toc(tic4);
+
     warning('on', 'MATLAB:callback:error')
     warning('on', 'Stateflow:translate:SFcnBlkNotTunableParamChangeFastRestart')
 
     [~, idx1] = min(abs(out1.error.Time - 0.01));
     [~, idx2] = min(abs(out2.error.Time - 0.01));
+    [~, idx3] = min(abs(out3.error.Time - 0.01));
+    [~, idx4] = min(abs(out3.error.Time - 0.01));
 
-    if toc1 >= 7 || toc2 >= 7
+    if toc1 >= 7 || toc2 >= 7 || toc3 >= 7 || toc4 >= 7
         J = 1e9;
     else
         J = abs(sum((out1.error.Data(end,:) - (out1.error.Data(idx1,:))).*W)) + ...
-        abs(sum((out2.error.Data(end,:) - (out2.error.Data(idx2,:))).*W));
+        abs(sum((out2.error.Data(end,:) - (out2.error.Data(idx2,:))).*W)) + ...
+        abs(sum((out3.error.Data(end,:) - (out3.error.Data(idx3,:))).*W)) + ...
+        abs(sum((out4.error.Data(end,:) - (out4.error.Data(idx4,:))).*W));
     end
 
     try % check for singularities in range

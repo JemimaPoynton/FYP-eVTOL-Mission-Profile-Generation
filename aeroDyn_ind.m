@@ -37,6 +37,7 @@ CY = applyDeriv(0, coeff.CYa, coeff.CYb, coeff.CYn, coeff.CYp, 0, coeff.CYr, u, 
 if abs(alpha) > 14.5*(pi/180)
     CL = 0;
     CD = coeff.CD0;
+    CY = 0;
 end
 
 %% Rotate wind to body
@@ -62,6 +63,8 @@ Cn = applyDeriv(0, coeff.Cna, coeff.Cnb, coeff.Cnn, coeff.Cnp, 0, coeff.Cnr, u, 
 
 if abs(alpha) > 14.5*(pi/180)
     Cm = 0;
+    Cl = 0;
+    Cn = 0;
 end
 
 Ma = [b*Cl; c*Cm; b*Cn].*Q*S;
