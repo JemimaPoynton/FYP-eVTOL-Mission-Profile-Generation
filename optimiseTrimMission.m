@@ -1,13 +1,15 @@
-function [trim, gamma, courseAngle, totalDist] = optimiseTrimMission(aircraft, coeff, mission, Np, stg)
+function [trim, gamma, courseAngle, totalDist] = optimiseTrimMission(aircraft, coeff, mission, Np, stg, ubR)
 
 %% Get Trajectory
 [gamma, courseAngle, dist, totalDist, idxf, ~] = getTrajStates(mission, Np, 1);
 
 %% Solve Optimisation
+prev = [];
 for i = 1:stg
     for j = 1:Np
         traj = [gamma(i,j) courseAngle(i,j)];
-        [U(:,j,i), X(:,j,i), forces(:,j,i), aero(:,j,i), uvw_e(:,j,i), alpha(:,j,i), MTcg(:,j,i), checkfail(:,j,i)] = trimSolver(aircraft, coeff, mission.rho, mission.vel(i,j), traj, mission.rdef(i,j), mission.alphaLim(i,j));
+        [U(:,j,i), X(:,j,i), forces(:,j,i), aero(:,j,i), uvw_e(:,j,i), alpha(:,j,i), MTcg(:,j,i), checkfail(:,j,i)] = trimSolver(aircraft, coeff, mission.rho, mission.vel(i,j), traj, mission.rdef(i,j), mission.alphaLim(i,j), prev, ubR(i,j));
+        prev = U(:,j,i);
     end
 end
 
@@ -31,5 +33,5 @@ trim.Ut = [Fx;
 if sum(sum(checkfail)) > 0 % handle failed trim
     [idx1, idx2] = find(squeeze(checkfail) == 1);
     disp(" ")
-    fprintf(2, ['Trim failed at index ' mat2str([1, idx1, idx2]) ' and distance ' num2str(dist(idxf((idx2-1)*Np + idx1))) '\n'])
+    fprintf(2, ['Trim failed at index ' mat2str([ones(size(idx1)), idx1, idx2]) ' and distance ' num2str(dist(idxf((idx2-1)*Np + idx1))) '\n'])
 end

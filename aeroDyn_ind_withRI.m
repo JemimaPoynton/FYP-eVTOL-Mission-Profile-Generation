@@ -59,13 +59,13 @@ if abs(alpha) > 14.5*(pi/180)
     CD = coeff.CD0;
     Cm = 0;
 else
-    % w = [u(length(coeff.CLn) + 1) u(length(coeff.CLn) + 5) u(length(coeff.CLn) + 9) u(length(coeff.CLn) + 13)];
-    % 
-    % CLfunc = @(alpha)applyDeriv(coeff.CL0, coeff.CLa, coeff.CLb, coeff.CLn, 0, coeff.CLq, 0, u, alpha, beta, pqr, ndc);
-    % CDfunc = @(alpha)applyDeriv(coeff.CD0, coeff.CDa, coeff.CDb, coeff.CDn, 0, 0, 0, u, abs(alpha), beta, pqr, ndc);
-    % Cmfunc = @(alpha)applyDeriv(coeff.Cm0, coeff.Cma, coeff.Cmb, coeff.Cmn, 0, coeff.Cmq, 0, u, alpha, beta, pqr, ndc);
-    % 
-    % [CL, CD, Cm] = applySlipstream(aircraft, aircraft.thrust, alpha, u(length(coeff.CLn) + 3), V, CLfunc, Cmfunc, CDfunc, w);
+    w = [u(length(coeff.CLn) + 1) u(length(coeff.CLn) + 5) u(length(coeff.CLn) + 9) u(length(coeff.CLn) + 13)];
+
+    CLfunc = @(alpha)applyDeriv(coeff.CL0, coeff.CLa, coeff.CLb, coeff.CLn, 0, coeff.CLq, 0, u, alpha, beta, pqr, ndc);
+    CDfunc = @(alpha)applyDeriv(coeff.CD0, coeff.CDa, coeff.CDb, coeff.CDn, 0, 0, 0, u, abs(alpha), beta, pqr, ndc);
+    Cmfunc = @(alpha)applyDeriv(coeff.Cm0, coeff.Cma, coeff.Cmb, coeff.Cmn, 0, coeff.Cmq, 0, u, alpha, beta, pqr, ndc);
+
+    [CL, CD, Cm] = applySlipstream(aircraft, aircraft.thrust, alpha, u(length(coeff.CLn) + 3), V, CLfunc, Cmfunc, CDfunc, w);
 end
 
 %% Rotate wind to body

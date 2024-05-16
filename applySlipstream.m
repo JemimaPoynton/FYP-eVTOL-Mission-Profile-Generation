@@ -4,7 +4,7 @@ function [CL, CD, Cm] = applySlipstream(aircraft, thrust, alpha, rpitch, Va, CLf
 S = aircraft.refGeo.Sref;
 c = aircraft.refGeo.cref;
 
-for i = 1:length(thrust)
+for i = 1:length(thrust.rotors)
     [Ss0, Ln, cref] = rotorSweptArea(aircraft, thrust.rotors(i)); % get swept area
 
     T = thrust.rotors(i).kt*w(i)^2;
@@ -25,9 +25,15 @@ for i = 1:length(thrust)
     alpha_ss(i) = atan(Vzss(i)/Vxss(i));
     Va_ss = sqrt(Vzss(i)^2 + Vxss(i)^2);
 
-    dCL(i) = 0.5*(Va_ss^2)*CLfunc(alpha_ss)*Ss(i);
-    dCD(i) = 0.5*(Va_ss^2)*CDfunc(alpha_ss)*Ss(i);
-    dCm(i) = 0.5*(Va_ss^2)*Cmfunc(alpha_ss)*Ss(i)*c;
+    if abs(alpha_ss) > 14.5*(pi/180)
+        dCL(i) = 0;
+        dCD(i) = 0;
+        dCm(i) = 0;
+    else 
+        dCL(i) = 0.5*(Va_ss^2)*CLfunc(alpha_ss(i))*Ss(i);
+        dCD(i) = 0.0310*3;
+        dCm(i) = 0.5*(Va_ss^2)*Cmfunc(alpha_ss(i))*Ss(i)*c;
+    end
 end
 L = sum(dCL) + 0.5*(Va^2)*CLfunc(alpha)*(S - sum(Ss));
 D = sum(dCD) + 0.5*(Va^2)*CDfunc(alpha)*(S - sum(Ss));

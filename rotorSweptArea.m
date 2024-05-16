@@ -18,8 +18,21 @@ for i = 1:length(aircraft.lift)
 
             TE = aircraft.lift(i).pos + offset;
 
-            vecl = sqrt(sum(abs(LE - [rotor.pos(1) 0 0]).^2));
-            vect = sqrt(sum(abs(TE - [rotor.pos(1) 0 0]).^2));
+
+            LE2R = LE - [rotor.pos(1) 0 0];
+            TE2R = TE - [rotor.pos(1) 0 0];
+
+            if LE2R(1) > 1
+                vecl = sqrt(sum(abs(LE2R).^2));
+            else
+                vecl = 10*aircraft.lift(i).c;
+            end
+
+            if TE2R(1) > 1
+                vect = sqrt(sum(abs(TE2R).^2));
+            else
+                vect = 10*aircraft.lift(i).c;
+            end
 
             if vecl < vect
                 dist(i) = sqrt(sum(vecl.^2));
@@ -38,7 +51,7 @@ end
 Ln = dist(idx)/rotor.radius;
 
 %% Get area of segment
-if Ln <= rotor.radius
+if dist(idx) <= rotor.radius
     theta_seg = 2*acos(Ln/rotor.radius);
     Ss0 = 0.5*(rotor.radius^2)*(theta_seg - sin(theta_seg));
 else

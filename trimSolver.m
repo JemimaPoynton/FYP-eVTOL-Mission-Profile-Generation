@@ -1,4 +1,4 @@
-function [U, X, forces, aero, uvw_e, alpha, MTcg, failed] = trimSolver(aircraft, coeff, rho, Va, traj, rpitch, alphaLim)
+function [U, X, forces, aero, uvw_e, alpha, MTcg, failed] = trimSolver(aircraft, coeff, rho, Va, traj, rpitch, alphaLim, prev, ubR)
 % function trimSolver solves the overactuated trim optimisation problem for
 % aircraft with state vector 'X' in the form [u v w p q r psi theta phi]'
 
@@ -18,36 +18,38 @@ refGeo = aircraft.refGeo;
 
 %% Define Saturation
 uwRatio = atan(alphaLim);
-Rrb = transMatrix([0 rpitch 0]);
-dist = (thrustIn.xyz_tr - cg)*Rrb;
-br = sqrt(abs(dist(3,1))/abs(dist(1,1)));
 
-% if rpitch > pi/2 - 0.3
-%     diff = interp1([pi/2 - 0.3, pi/2], [0.1 0], rpitch);
-%     pitchlim = [1-diff 1+diff];
-% else
-%     pitchlim = [0.999999 1.000001];
-% end
-pitchlim = [0.9 1];
-lb = [0 -0.25*Va -Va*uwRatio -pi/4 -pi/4 -pi/4 -0.52 -0.52 -0.52 0 0 0 0 pitchlim(1)*rpitch]';
-ub = [+Va +0.25*Va +Va*uwRatio +pi/4 +pi/4 +pi/4 0.52 0.52 0.52 7000 7000 7000 7000 pitchlim(2)*rpitch]';
+if rpitch > pi/2 - 0.05
+    diff = interp1([pi/2 - 0.05, pi/2], [0.01 0], rpitch);
+    pitchlim = [1-diff 1+diff];
+else
+    pitchlim = [0.99 1.01];
+end
+lb = [0 -0.25*Va -Va*uwRatio -pi/4 -pi/4 -pi/4 -0.52 -0.52 0 0 0 0 0 0 0 pitchlim(1)*rpitch]';
+ub = [+Va +0.25*Va +Va*uwRatio +pi/4 +pi/4 +pi/4 0.52 0.52 ubR ubR ubR ubR ubR 17000 17000 pitchlim(2)*rpitch]';
 
 %% Define Anonymous Function
-func = @(Z)trimCost(aircraft, Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, traj, rpitch, ub);
+func = @(Z)trimCost(aircraft, Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, traj, rpitch, ub, prev);
 % trCon = @(U)
 
 %% Solve
-opts = optimset('PlotFcns','optimplotfval','TolX',1e-30, 'MaxIter', 100000, 'MaxFunEvals', 100000);
+opts = optimset('PlotFcns','optimplotfval','TolX',1e-9, 'MaxIter', 100000, 'MaxFunEvals', 1e4, 'ObjectiveLimit', 1e-9);
 
-z0p_func = @(Z)trimCost_ga(aircraft, Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, traj, rpitch, ub);
-z0p = guess(z0p_func, lb, ub, 11, Va)';
+z0p_func = @(Z)trimCost_ga(aircraft, Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, traj, rpitch, ub, prev);
+z0p = guess(z0p_func, lb, ub, 12, Va)';
 
-z0 = zeros(1,14)';
-z0(1) = Va;
+Rrb = transMatrix([0 z0p(12) 0]);
+dist = (thrustIn.xyz_tr - cg)*Rrb;
+br = sqrt(abs(dist(3,1))/abs(dist(1,1)));
+
+z0 = zeros(1,15)';
+% z0(1) = Va;
 z0(1:9) = z0p(1:9);
-z0(end-4:end-1) = z0p(10);
-z0([end-4 end-3]) = z0(10)*br;
+z0([10 11]) = z0p(10);
+z0([12 13]) = z0(10)*br;
+z0([14 15]) = z0p(11);
 % z0(end) = z0p(11);
+z0(16) = z0p(12);
 
 [Z, fval] = fmincon(func, z0, [], [], [], [], lb, ub, [], opts);
 % if fval > 0.01
@@ -74,13 +76,18 @@ for i = 1:nC
 end
 
 %% Check Convergence
-X = [Z(1) 0 Z(3)' 0 0 0 Z(4:6)']';
-U = [Z(7:9)' Z(10) 0 rpitch 0 ...
-            Z(11) 0 rpitch 0 ...
-            Z(12) 0 rpitch 0 ...
-            Z(13) 0 rpitch 0]';
+U = [Z(7:8)' Z(10) 0 0 0 ...
+             Z(11) 0 0 0 ...
+             Z(12) 0 0 0 ...
+             Z(13) 0 0 0 ...
+             Z(14) 0 Z(16) 0 ...
+             0 0 Z(16) 0]';
 
-if abs(fval) < 1e-3
+X = [Z(1) 0 Z(3)' 0 0 0 0 Z(5)' Z(6)]';
+
+[Jtrim, Jraj] = trimCostOutputs(aircraft, Z, Va, coeff, rho, refGeo, m, thrustIn, cg, I, traj, rpitch, ub, prev);
+
+if abs(Jtrim) < 1e-3
     disp(['Successfully trimmed at ' mat2str(X)])
 else
     disp(['Unable to trim at ' mat2str(X)])
@@ -95,5 +102,5 @@ end
 %% Get Forces for Optimum Control
 alpha = atan2(X(3), X(1));
 
-[Fb, ~, forces, aero, uvw_e, MTcg] = aeroDyn_ind(aircraft, coeff, U', rho, X, refGeo, m, thrustIn, cg);
+[Fb, Mcg, forces, aero, uvw_e, MTcg] = aeroDyn_ind(aircraft, coeff, U', rho, X, refGeo, m, thrustIn, cg);
 end

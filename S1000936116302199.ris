@@ -1,0 +1,23 @@
+TY  - JOUR
+T1  - Control techniques of tilt rotor unmanned aerial vehicle systems: A review
+AU  - Liu, Zhong
+AU  - He, Yuqing
+AU  - Yang, Liying
+AU  - Han, Jianda
+JO  - Chinese Journal of Aeronautics
+VL  - 30
+IS  - 1
+SP  - 135
+EP  - 148
+PY  - 2017
+DA  - 2017/02/01/
+SN  - 1000-9361
+DO  - https://doi.org/10.1016/j.cja.2016.11.001
+UR  - https://www.sciencedirect.com/science/article/pii/S1000936116302199
+KW  - Aircraft structures
+KW  - Dynamics modeling
+KW  - Flight control
+KW  - Tilt rotors
+KW  - Unmanned aerial vehicle (UAV)
+AB  - The tilt rotor unmanned aerial vehicle (TRUAV) exhibits special application value due to its unique rotor structure. However, varying dynamics and aerodynamic interference caused by tiltable rotors are great technical challenges and key issues for TRUAV’s high-powered flight controls, which have attracted the attention of many researchers. This paper outlines the concept of TRUAV and some typical TRUAV platforms while focusing on control techniques. TRUAV structural features, dynamics modeling, and flight control methods are discussed, and major challenges and corresponding developmental tendencies associated with TRUAV flight control are summarized.
+ER  - 

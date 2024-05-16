@@ -14,7 +14,7 @@ forces = trim.forces; U = trim.U; uvw_e = trim.uvw_e; X = trim.X; alpha = trim.a
 %% Force plots
 if f == 1
     figure()
-    plot(dist(idxf(1:Np*stg)), [squeeze(forces([1:3 7:9],:,1)) squeeze(forces([1:3 7:9],:,2)) squeeze(forces([1:3 7:9],:,3)) squeeze(forces([1:3 7:9],:,4)) squeeze(forces([1:3 7:9],:,5))], 'black:')
+    plot(dist(idxf(1:Np*stg)), [squeeze(forces([1:3 7:9],:,1)) squeeze(forces([1:3 7:9],:,2)) squeeze(forces([1:3 7:9],:,3)) squeeze(forces([1:3 7:9],:,4)) squeeze(forces([1:3 7:9],:,5))])
     grid on
     hold on
     % scatter(dist(idxf), zeros(size(dist(idxf))), 'x', 'red')
@@ -94,8 +94,8 @@ if u == 1
     figure()
     grid on
     hold on
-    plot(dist(idxf(1:Np*stg)), [squeeze(U(1:3,:,1)) squeeze(U(1:3,:,2)) squeeze(U(1:3,:,3)) squeeze(U(1:3,:,4)) squeeze(U(1:3,:,5))]*(180/pi))
-    legend('Elevator (deg)', 'Aileron (deg)', 'Rudder (deg)')
+    plot(dist(idxf(1:Np*stg)), [squeeze(U(1:2,:,1)) squeeze(U(1:2,:,2)) squeeze(U(1:2,:,3)) squeeze(U(1:2,:,4)) squeeze(U(1:2,:,5))]*(180/pi))
+    legend('Aileron (deg)', 'Ruddervator (deg)')
     
     xlabel('Distance [m]')
     ylabel('Deflection [deg]')
@@ -104,18 +104,20 @@ if u == 1
     subplot(2,1,1)
     grid on
     hold on
-    plot(dist(idxf(1:Np*stg)), ([squeeze(U(4,:,1)) squeeze(U(4,:,2)) squeeze(U(4,:,3)) squeeze(U(4,:,4)) squeeze(U(4,:,5))]).^2*kt, 'black:')
-    plot(dist(idxf(1:Np*stg)), ([squeeze(U(8,:,1)) squeeze(U(8,:,2)) squeeze(U(8,:,3)) squeeze(U(8,:,4)) squeeze(U(8,:,5))]).^2*kt, 'black--')
-    plot(dist(idxf(1:Np*stg)), ([squeeze(U(12,:,1)) squeeze(U(12,:,2)) squeeze(U(12,:,3)) squeeze(U(12,:,4)) squeeze(U(12,:,5))]).^2*kt, 'blue--')
-    plot(dist(idxf(1:Np*stg)), ([squeeze(U(16,:,1)) squeeze(U(16,:,2)) squeeze(U(16,:,3)) squeeze(U(16,:,4)) squeeze(U(16,:,5))]).^2*kt, 'b:')
-    legend('Rotor 1', 'Rotor 2', 'Rotor 3', 'Rotor 4')
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(3,:,1)) squeeze(U(3,:,2)) squeeze(U(3,:,3)) squeeze(U(3,:,4)) squeeze(U(3,:,5))]).^2*kt, 'black:')
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(7,:,1)) squeeze(U(7,:,2)) squeeze(U(7,:,3)) squeeze(U(7,:,4)) squeeze(U(7,:,5))]).^2*kt, 'black--')
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(11,:,1)) squeeze(U(11,:,2)) squeeze(U(11,:,3)) squeeze(U(11,:,4)) squeeze(U(11,:,5))]).^2*kt, 'blue--')
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(15,:,1)) squeeze(U(15,:,2)) squeeze(U(15,:,3)) squeeze(U(15,:,4)) squeeze(U(15,:,5))]).^2*kt, 'b:')
+        plot(dist(idxf(1:Np*stg)), ([squeeze(U(19,:,1)) squeeze(U(19,:,2)) squeeze(U(19,:,3)) squeeze(U(19,:,4)) squeeze(U(19,:,5))]).^2*kt, 'red--')
+    plot(dist(idxf(1:Np*stg)), ([squeeze(U(23,:,1)) squeeze(U(23,:,2)) squeeze(U(23,:,3)) squeeze(U(23,:,4)) squeeze(U(23,:,5))]).^2*kt, 'red:')
+    legend('Rotor 1', 'Rotor 2', 'Rotor 3', 'Rotor 4', 'Rotor 5', 'Rotor 6')
     ylabel('Thrust [N]')
     xlabel('Distance [m]')
     
     subplot(2,1,2)
     grid on
     hold on
-    plot(dist(idxf(1:Np*stg)), [squeeze(U([6 10 14 18],:,1)) squeeze(U([6 10 14 18],:,2)) squeeze(U([6 10 14 18],:,3)) squeeze(U([6 10 14 18],:,4)) squeeze(U([6 10 14 18],:,5))]*(180/pi))
+    plot(dist(idxf(1:Np*stg)), [squeeze(U([21 25],:,1)) squeeze(U([21 25],:,2)) squeeze(U([21 25],:,3)) squeeze(U([21 25],:,4)) squeeze(U([21 25],:,5))]*(180/pi))
     legend('Rotor 1 (deg)', 'Rotor 2 (deg)', 'Rotor 3 (deg)', 'Rotor 4 (deg)')
     
     xlabel('Distance [m]')

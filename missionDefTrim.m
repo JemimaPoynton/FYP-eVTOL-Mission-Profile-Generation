@@ -1,18 +1,19 @@
 clear courseAngle gamma U forces aero uvw_e alpha
 aircraft = VX4;
+%% Notes
 
 %% Define a Mission Profile
 mission = struct();
 N = 1000;
-Np = 30;
+Np = 20;
 scale = [10 10 10]';
 initTO = [zeros(1, N); zeros(1, N); linspace(0, 20, N)].*scale;
 transitionTO = [linspace(0, 30, N); zeros(1, N); 20 + 5.*(1 - exp((-(linspace(0, 10, N)/6).^3)))].*scale;
 
 cruise = [linspace(30, 120, N); linspace(0, 30, N); 25 + zeros(1, N)].*scale; 
 
-transitionL = [linspace(120, 240, N); (30 + zeros(1, N)); 25 - 3.*(1 - exp((-(linspace(0, 10, N)/3).^3)))].*scale;
-endL = [(240 + zeros(1, N)); (30 + zeros(1, N)); linspace(22, 0, N)].*scale;
+transitionL = [linspace(120, 240, N); (30 + zeros(1, N)); 25 - 1.*(1 - exp((-(linspace(0, 10, N)/3).^3)))].*scale;
+endL = [(240 + zeros(1, N)); (30 + zeros(1, N)); linspace(24, 0, N)].*scale;
 
 mission.xyz = [initTO transitionTO cruise transitionL endL];
 mission.N = N; % points on mission sections
@@ -48,13 +49,24 @@ plot(dist(idxf), [mission.rdef(1,:) mission.rdef(2,:) mission.rdef(3,:) mission.
 xlabel('Distance along path [m]')
 ylabel('Rotor Tilt [deg]')
 
+%% Rotor wind down
+ubR = zeros(size(dist(idx)));
+
+ubR([1 5],:) = 1000;
+ubR(4,:) = 1000*(1 - exp((-(dist(idx)/(9*scale(1))).^3)));
+ubR(3,:) = 0;
+ubR(2,:) = 1000*(exp((-(dist(idx)/(9*scale(1))).^3)));
+
+figure()
+plot(dist(idxf), [ubR(1,:) ubR(2,:) ubR(3,:) ubR(4,:) ubR(5,:)])
+
 %% Define Velocity Profile
 mission.vel = zeros(size(dist(idx)));
 
 mission.vel(1,:) = linspace(10, 0.001, length(idx));
-mission.vel(2,:) = linspace(0.001, 25, length(idx));
-mission.vel(3,:) = 25;
-mission.vel(4,:) = linspace(25, 0.001, length(idx));
+mission.vel(2,:) = linspace(0.001, 45, length(idx));
+mission.vel(3,:) = 45;
+mission.vel(4,:) = linspace(45, 0.001, length(idx));
 mission.vel(5,:) = linspace(0.001, 10, length(idx));
 
 figure()
@@ -64,16 +76,16 @@ plot(dist(idxf), [mission.vel(1,:) mission.vel(2,:) mission.vel(3,:) mission.vel
 mission.alphaLim = zeros(size(dist(idx))); % Assuming that stall effects are negiligible in hover
 
 mission.alphaLim([1 5],:) = pi/2;
-mission.alphaLim(2:4,:) = 10.5*(pi/180);
+mission.alphaLim(2:4,:) = 14.5*(pi/180);
 
 %% Calculate Mission Trim
-trim = optimiseTrimMission(aircraft, coefficients, mission, Np, 5);
+trim = optimiseTrimMission(aircraft, coefficients, mission, Np, 5, ubR);
 
 %% Plot
 createTrimPlots(1, 1, 1, 1, 1, 1, trim, aircraft.thrust.rotors(1).kt)
 
 %% Save Trim Data
-save('trimUAM1','trim')
+save('trimUAM2_RI','trim')
 
 %% figure()
 grid on
@@ -84,20 +96,20 @@ plot(dist(idxf), [squeeze(trim.U(6,:,1)) squeeze(trim.U(6,:,2)) squeeze(trim.U(6
 xlabel('Distance along path [m]')
 ylabel('Rotor Tilt [deg]')
 
-% %% Post process power
-% clear vh lamh T lami_ lami Cpp Cp CT
+%% Post process power
+% clear vh lamh T lami_ lami Cpp Cp CT Cpi Cpnet
 % 
 % U = reshape(trim.U,size(trim.U,1),[]);
 % X = reshape(trim.X,size(trim.X,1),[]);
 % alpha = reshape(trim.alpha,size(trim.alpha,1),[]);
-% nT = 4;
+% nT = 6;
 % 
-% nC = 3;
+% nC = 2;
 % 
 % for i = 1:nT
 %     rotor = aircraft.thrust.rotors(i);
 %     T(:,i) = U(nC + 4*(i - 1) + 1,:).^2*rotor.kt;
-%     T(find(T(:,i)==0),:) = 1e-15;
+%     T(find(T(:,i)==0),:) = 1e-4;
 %     VT = 448*rotor.radius*ones(size(-X(1,:)));
 %     CT = T(:,i)./(1.225*pi*(rotor.radius^2).*(VT)'.^2);
 % 
@@ -111,7 +123,8 @@ ylabel('Rotor Tilt [deg]')
 % 
 %     idxaf2 = zeros(size(-X(1,:))); % index of slow descent
 %     idxaf2(idxhv) = ones(size(-X(1,idxhv)));
-%     idxaf2([idxaf1; idxaf3]) = 0; % find all other indices
+%     idxaf2(idxaf1) = 0; % find all other indices
+%     idxaf2(idxaf3) = 0;
 %     idxaf2 = find(idxaf2 == 1);
 % 
 %     idxff = ones(size(-X(1,:))); % remove axial flight cases
@@ -156,6 +169,7 @@ ylabel('Rotor Tilt [deg]')
 %     Cp(:,i) = 1.15*CT.*lami' + Cpp(:,i) + Cpnet(:,i);
 % end
 % 
+% figure()
 % plot(dist(idxf), sum(Cp,2).*1.225.*VT'.^3.*pi.*(rotor.radius^2)/(1e3))
 % grid on
 % hold on
